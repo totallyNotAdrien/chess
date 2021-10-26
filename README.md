@@ -1,1 +1,2 @@
-# chess
+# Chess  
+It's chess, bro
