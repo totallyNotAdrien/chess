@@ -35,12 +35,18 @@ class Chess
     #get input
   end
 
-  def checkmate?
+  def checkmate?(player = @player_index) #player = player_color ?
     #check board for checkmate
+    #checkmate = player in check and no valid moves
   end
 
   def display_board
     #@board.display
+  end
+
+  def display_turn
+    #display curr player
+    #if in check, say so
   end
 
   def switch_player
