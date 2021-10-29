@@ -1,4 +1,8 @@
+require_relative "chess_helper.rb"
+
 class Board
+  include ChessHelper
+
   def initialize(moves = [])
     #grid 8x8 array
     @rows = 8
@@ -28,7 +32,9 @@ class Board
 
       for col_index in 0...@cols
         #sym = colored_piece(@grid[row_index][col_index])
-        grid_space = color_space(" #{piece} ".black, bg_color)
+        space_str = " #{piece} "
+        space_str = col_index % 2 == 0 ? space_str.black : space_str.white
+        grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
         row_out += " #{grid_space}#{last_col ? " " : ""}"
         bg_color = (bg_color + 1) % 2
@@ -42,13 +48,13 @@ class Board
     #column indicators
     col_num_output = " " * 5
     for letter in "a".."h"
-      col_num_output += "#{letter}" + (" " * 4)
+      col_num_output += "#{letter}" + (" " * 3)
     end
     puts col_num_output
   end
 
   def color_space(contents, color_index)
-    return contents.on_brown if color_index == 0
+    return contents.on_cyan if color_index == 0
     contents.on_blue
   end
 
@@ -66,44 +72,3 @@ class Board
   end
 end
 
-class String
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
-  end
-
-  def black
-    colorize(30)
-  end
-
-  def red
-    colorize(31)
-  end
-
-  def yellow
-    colorize(33)
-  end
-
-  def on_red
-    colorize(41)
-  end
-
-  def on_brown
-    colorize(43)
-  end
-
-  def on_blue
-    colorize(44)
-  end
-
-  def on_cyan
-    colorize(46)
-  end
-
-  def on_peach
-    colorize(101)
-  end
-
-  def on_yellow
-    colorize(103)
-  end
-end
