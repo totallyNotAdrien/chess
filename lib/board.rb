@@ -1,4 +1,5 @@
 require_relative "chess_helper.rb"
+Dir["pieces/*.rb"].each {|file| require_relative file}
 
 class Board
   include ChessHelper
@@ -8,6 +9,10 @@ class Board
     @rows = 8
     @cols = 8
     @grid = Array.new(@rows){Array.new(@cols)}
+  end
+
+  def setup_new_board
+
   end
 
   def move_piece(start_pos, end_pos)

@@ -2,11 +2,12 @@ require_relative "board.rb"
 require_relative "piece.rb"
 
 class Chess
-
+  include ChessHelper
 
   def initialize(moves = [])
-    #new @board
-    #@players{white:[], black:[]} #{"white"=>[pieces], "black=>[pieces]"}
+    @board = Board.new
+    @players = {WHITE=>[], BLACK=>[]}
+    @board.setup_new_board
     #@player_index
     #do stuff with moves
   end
@@ -52,4 +53,7 @@ class Chess
   def switch_player
     #@player_index = (@player_index + 1) % 2
   end
+
+  private
+
 end
