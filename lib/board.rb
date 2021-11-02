@@ -1,5 +1,9 @@
 require_relative "chess_helper.rb"
-Dir["pieces/*.rb"].each {|file| require_relative file}
+require "pry-byebug"
+#binding.pry
+#Dir["pieces/*.rb"].each {|file| require_relative file}
+#Dir.glob("./pieces/*.rb") { |file| require file }
+Dir.glob(File.join("./pieces", "**","*.rb"), &method(:require))
 
 class Board
   include ChessHelper
@@ -12,7 +16,11 @@ class Board
   end
 
   def setup_new_board
-
+    #black's pawns
+    row_index = 1
+    for col_index in 0...@cols
+      @grid[row_index][col_index] = Pawn.new([row_index,col_index], BLACK)
+    end
   end
 
   def move_piece(start_pos, end_pos)
@@ -33,12 +41,11 @@ class Board
       row_out = " #{row_number}" + (" " * 1)
 
       bg_color = row_index % 2
-      piece = "\u265e"
+      piece = @grid[row_index][col_index]
 
       for col_index in 0...@cols
-        #sym = colored_piece(@grid[row_index][col_index])
-        space_str = " #{piece} "
-        space_str = col_index % 2 == 0 ? space_str.black : space_str.white
+        space_str = " #{piece.piece_symbol} "
+        space_str = piece.color == BLACK ? space_str.black : space_str.white
         grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
         row_out += " #{grid_space}#{last_col ? " " : ""}"

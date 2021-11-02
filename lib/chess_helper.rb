@@ -19,20 +19,36 @@ module ChessHelper
   def chess_to_grid_coordinates(position)
     return nil unless position.is_a?(String)
 
-    position.downcase!
+    position = position.downcase
     position.remove_spaces!
     if position.length == 2 && /[a-h][1-8]/.match(position)
       col = position[0].ord - "a".ord
       row = 8 - position[1].to_i
       return [row,col]
     end
-    nil
+  end
+
+  def in_grid_coords?(pos)
+    return pos.is_a?(Array) && pos.length == 2
+      pos.all? { |coord| coord.is_a?(Integer) && coord.between?(0,7)}
+  end
+
+  def in_chess_coords?(pos)
+    return false unless pos.is_a?(String)
+
+    pos.downcase.remove_spaces!
+    matches_pattern = /[a-h][1-8]/.match(pos) != nil
+    return pos.length == 2 && matches_pattern
   end
 end
 
 class String
   def colorize(color_code)
     "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def remove_spaces
+    self.gsub(" ", "")
   end
 
   def remove_spaces!
