@@ -1,9 +1,5 @@
 require_relative "chess_helper.rb"
-require "pry-byebug"
-#binding.pry
-#Dir["pieces/*.rb"].each {|file| require_relative file}
-#Dir.glob("./pieces/*.rb") { |file| require file }
-Dir.glob(File.join("./pieces", "**","*.rb"), &method(:require))
+Dir["./lib/pieces/*.rb"].each {|file| require file}
 
 class Board
   include ChessHelper
@@ -16,10 +12,34 @@ class Board
   end
 
   def setup_new_board
+    first_rank_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+
+    #black's first rank
+    row_index = 0
+    col_index = 0
+    for piece in first_rank_classes
+      @grid[row_index][col_index] = piece.new([row_index, col_index], BLACK)
+      col_index += 1
+    end
+
     #black's pawns
     row_index = 1
     for col_index in 0...@cols
       @grid[row_index][col_index] = Pawn.new([row_index,col_index], BLACK)
+    end
+
+    #white's first rank
+    row_index = @rows - 1
+    col_index = 0
+    for piece in first_rank_classes
+      @grid[row_index][col_index] = piece.new([row_index, col_index], WHITE)
+      col_index += 1
+    end
+
+    #white's pawns
+    row_index = @rows - 2
+    for col_index in 0...@cols
+      @grid[row_index][col_index] = Pawn.new([row_index,col_index], WHITE)
     end
   end
 
@@ -41,14 +61,18 @@ class Board
       row_out = " #{row_number}" + (" " * 1)
 
       bg_color = row_index % 2
-      piece = @grid[row_index][col_index]
 
       for col_index in 0...@cols
-        space_str = " #{piece.piece_symbol} "
-        space_str = piece.color == BLACK ? space_str.black : space_str.white
+        piece = @grid[row_index][col_index]
+        piece_symbol = piece ? piece.piece_symbol : " "
+        space_str = " #{piece_symbol} "
+
+        if piece
+          space_str = piece.color == BLACK ? space_str.black : space_str.white
+        end
         grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
-        row_out += " #{grid_space}#{last_col ? " " : ""}"
+        row_out += "#{grid_space}#{last_col ? " " : ""}"
         bg_color = (bg_color + 1) % 2
       end
       output += "#{row_out}\n"
@@ -58,9 +82,9 @@ class Board
     puts output
 
     #column indicators
-    col_num_output = " " * 5
+    col_num_output = " " * 4
     for letter in "a".."h"
-      col_num_output += "#{letter}" + (" " * 3)
+      col_num_output += "#{letter}" + (" " * 2)
     end
     puts col_num_output
   end
