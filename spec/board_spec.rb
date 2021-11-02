@@ -54,5 +54,32 @@ describe Board do
         end
       end
     end
+
+    context "when dealing with white's pieces" do
+      let(:board_white_pieces){ Board.new }
+      it "is all white pieces" do
+        board_white_pieces.setup_new_board
+        pieces = board_white_pieces.grid[6] + board_white_pieces.grid[7]
+        expect(pieces).to all_be_of_color(Board::WHITE)
+      end
+
+      context "when rank is white's first rank" do
+        let(:board_white_first_rank){Board.new}
+
+        it "has correct first rank classes" do
+          board_white_first_rank.setup_new_board
+          expect(board_white_first_rank.grid[7]).to have_correct_first_rank_classes
+        end
+      end
+
+      context "when rank is white's second rank" do
+        let(:board_white_first_rank){Board.new}
+
+        it "is all pawns" do
+          board_white_first_rank.setup_new_board
+          expect(board_white_first_rank.grid[6]).to be_all_pawns
+        end
+      end
+    end
   end
 end
