@@ -5,13 +5,14 @@ class Piece
 
   attr_reader :color
 
-  def initialize(position, color = WHITE)
+  def initialize(board, position, color = WHITE)
     if in_grid_coords?(position)
       position = grid_to_chess_coordinates(position) 
     elsif !in_chess_coords?(position)
       puts "Invalid position error: Piece: #{self}, Pos: #{position}"
       position = nil
     end
+    @board = board
     @position = position
     @prev_position = []
     @color = color
@@ -24,5 +25,14 @@ class Piece
 
   def piece_symbol
     "\u262e"
+  end
+
+  def valid_move?(pos)
+    true  #temporary
+  end
+
+  def set_pos(pos)
+    @prev_position = @position
+    @position = grid_to_chess_coordinates(pos) || pos
   end
 end

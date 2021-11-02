@@ -20,37 +20,54 @@ class Board
     row_index = 0
     col_index = 0
     for piece in first_rank_classes
-      @grid[row_index][col_index] = piece.new([row_index, col_index], BLACK)
+      @grid[row_index][col_index] = piece.new(self, [row_index, col_index], BLACK)
       col_index += 1
     end
 
     #black's pawns
     row_index = 1
     for col_index in 0...@cols
-      @grid[row_index][col_index] = Pawn.new([row_index,col_index], BLACK)
+      @grid[row_index][col_index] = Pawn.new(self, [row_index,col_index], BLACK)
     end
 
     #white's first rank
     row_index = @rows - 1
     col_index = 0
     for piece in first_rank_classes
-      @grid[row_index][col_index] = piece.new([row_index, col_index], WHITE)
+      @grid[row_index][col_index] = piece.new(self, [row_index, col_index], WHITE)
       col_index += 1
     end
 
     #white's pawns
     row_index = @rows - 2
     for col_index in 0...@cols
-      @grid[row_index][col_index] = Pawn.new([row_index,col_index], WHITE)
+      @grid[row_index][col_index] = Pawn.new(self, [row_index,col_index], WHITE)
     end
   end
 
   def move_piece(start_pos, end_pos)
+    return false unless in_chess_coords?(start_pos) || in_grid_coords?(start_pos)
     #check for piece at start_pos
       #check that end_pos is valid for piece
         #move piece
         #side effects
           #pawn that moved 2 spaces is made en passantable to now-adjacent pawns
+    
+    start_pos = chess_to_grid_coordinates(start_pos) if in_chess_coords?(start_pos)
+    row_index, col_index = start_pos
+    piece = @grid[row_index][col_index]
+
+    return false unless piece
+    end_pos = chess_to_grid_coordinates(end_pos) || end_pos
+
+    if piece.valid_move?(end_pos)
+      #do piece-taking stuff if anything more than setting to nil is required, then...
+      @grid[row_index][col_index] = nil
+      new_row_index, new_col_index = end_pos
+      @grid[new_row_index][new_col_index] = piece
+      piece.set_pos(end_pos)  #side effects happen here
+      true
+    end
   end
 
   def display
