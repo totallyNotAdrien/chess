@@ -4,6 +4,8 @@ Dir["./lib/pieces/*.rb"].each {|file| require file}
 class Board
   include ChessHelper
 
+  attr_reader :grid
+
   def initialize(moves = [])
     #grid 8x8 array
     @rows = 8
