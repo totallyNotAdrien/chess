@@ -4,13 +4,15 @@ Dir["./lib/pieces/*.rb"].each {|file| require file}
 class Board
   include ChessHelper
 
-  attr_reader :grid
+  attr_reader :grid, :black_pieces, :white_pieces
 
   def initialize(moves = [])
     #grid 8x8 array
     @rows = 8
     @cols = 8
     @grid = Array.new(@rows){Array.new(@cols)}
+    @black_pieces = []
+    @white_pieces = []
   end
 
   def setup_new_board
@@ -19,29 +21,37 @@ class Board
     #black's first rank
     row_index = 0
     col_index = 0
-    for piece in first_rank_classes
-      @grid[row_index][col_index] = piece.new(self, [row_index, col_index], BLACK)
+    for piece_class in first_rank_classes
+      piece = piece_class.new(self, [row_index, col_index], BLACK)
+      @grid[row_index][col_index] = piece
+      @black_pieces.push(piece)
       col_index += 1
     end
 
     #black's pawns
     row_index = 1
     for col_index in 0...@cols
-      @grid[row_index][col_index] = Pawn.new(self, [row_index,col_index], BLACK)
+      piece = Pawn.new(self, [row_index, col_index], BLACK)
+      @grid[row_index][col_index] = piece
+      @black_pieces.push(piece)
     end
 
     #white's first rank
     row_index = @rows - 1
     col_index = 0
-    for piece in first_rank_classes
-      @grid[row_index][col_index] = piece.new(self, [row_index, col_index], WHITE)
+    for piece_class in first_rank_classes
+      piece = piece_class.new(self, [row_index, col_index], WHITE)
+      @grid[row_index][col_index] = piece
+      @white_pieces.push(piece)
       col_index += 1
     end
 
     #white's pawns
     row_index = @rows - 2
     for col_index in 0...@cols
-      @grid[row_index][col_index] = Pawn.new(self, [row_index,col_index], WHITE)
+      piece = Pawn.new(self, [row_index, col_index], WHITE)
+      @grid[row_index][col_index] = piece
+      @white_pieces.push(piece)
     end
   end
 
@@ -55,17 +65,17 @@ class Board
     
     start_pos = chess_to_grid_coordinates(start_pos) if in_chess_coords?(start_pos)
     row_index, col_index = start_pos
-    piece = @grid[row_index][col_index]
+    piece_class = @grid[row_index][col_index]
 
-    return false unless piece
+    return false unless piece_class
     end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
-    if piece.valid_move?(end_pos)
+    if piece_class.valid_move?(end_pos)
       #do piece-taking stuff if anything more than setting to nil is required, then...
       @grid[row_index][col_index] = nil
       new_row_index, new_col_index = end_pos
-      @grid[new_row_index][new_col_index] = piece
-      piece.set_pos(end_pos)  #side effects happen here
+      @grid[new_row_index][new_col_index] = piece_class
+      piece_class.set_pos(end_pos)  #side effects happen here
       true
     end
   end
@@ -82,12 +92,12 @@ class Board
       bg_color = row_index % 2
 
       for col_index in 0...@cols
-        piece = @grid[row_index][col_index]
-        piece_symbol = piece ? piece.piece_symbol : " "
+        piece_class_class = @grid[row_index][col_index]
+        piece_symbol = piece_class ? piece_class.piece_symbol : " "
         space_str = " #{piece_symbol} "
 
-        if piece
-          space_str = piece.color == BLACK ? space_str.black : space_str.white
+        if piece_class
+          space_str = piece_class.color == BLACK ? space_str.black : space_str.white
         end
         grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
