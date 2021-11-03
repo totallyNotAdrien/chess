@@ -47,38 +47,69 @@ describe ChessHelper do
   end
 
   describe "#in_grid_coords?" do
+    let(:helper_class){ Class.new { extend ChessHelper }}
+
     context "when pos = [2,4]" do
-      let(:helper_class){ Class.new { extend ChessHelper }}
       it "returns true" do
         expect(helper_class).to be_in_grid_coords([2,4])
       end
     end
 
     context "when pos = 'e6'" do
-      let(:helper_class){ Class.new { extend ChessHelper }}
       it "returns false" do
         expect(helper_class).not_to be_in_grid_coords('e6')
       end
     end
 
     context "when pos = [2,4,3,3]" do
-      let(:helper_class){ Class.new { extend ChessHelper }}
       it "returns false" do
         expect(helper_class).not_to be_in_grid_coords([2,4,3,3])
       end
     end
 
     context "when pos = ['2',4]" do
-      let(:helper_class){ Class.new { extend ChessHelper }}
       it "returns false" do
         expect(helper_class).not_to be_in_grid_coords(['2',4])
       end
     end
 
     context "when pos = [2,8]" do
-      let(:helper_class){ Class.new { extend ChessHelper }}
       it "returns false" do
         expect(helper_class).not_to be_in_grid_coords([2,8])
+      end
+    end
+  end
+
+  describe "#in_chess_coords?" do
+    let(:helper_class){ Class.new { extend ChessHelper }}
+
+    context "when pos = 'b6'" do
+      it "returns true" do
+        expect(helper_class).to be_in_chess_coords("b6")
+      end
+    end
+
+    context "when pos = ['b',6]" do
+      it "returns false" do
+        expect(helper_class).not_to be_in_chess_coords(['b',6])
+      end
+    end
+
+    context "when pos = 'b16'" do
+      it "returns false" do
+        expect(helper_class).not_to be_in_chess_coords("b16")
+      end
+    end
+
+    context "when pos = 'i4'" do
+      it "returns false" do
+        expect(helper_class).not_to be_in_chess_coords("i4")
+      end
+    end
+
+    context "when pos = 'c9'" do
+      it "returns false" do
+        expect(helper_class).not_to be_in_chess_coords("c9")
       end
     end
   end
