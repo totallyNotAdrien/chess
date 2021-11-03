@@ -4,21 +4,39 @@ describe ChessHelper do
   describe "#grid_to_chess_coordinates" do
     let(:helper_class){ Class.new { extend ChessHelper }}
 
-    context "when receiving [1,2]" do
+    context "when position = [1,2]" do
       it "returns 'c7'" do
         expect(helper_class.grid_to_chess_coordinates([1,2])).to eql("c7")
       end
     end
 
-    context "when receiving [5,7]" do
+    context "when position = [5,7]" do
       it "returns 'h3'" do
         expect(helper_class.grid_to_chess_coordinates([5,7])).to eql("h3")
       end
     end
 
-    context "when receiving [3,5]" do
+    context "when position = [3,5]" do
       it "returns 'f5'" do
         expect(helper_class.grid_to_chess_coordinates([3,5])).to eql("f5")
+      end
+    end
+
+    context "when position = 'a5' (is not an array)" do
+      it "returns nil" do
+        expect(helper_class.grid_to_chess_coordinates('a5')).to be_nil
+      end
+    end
+
+    context "when position = [3,5,4,6] (has too many values)" do
+      it "returns nil" do
+        expect(helper_class.grid_to_chess_coordinates([3,5,4,6])).to be_nil
+      end
+    end
+
+    context "when position = [1,8] (value out of bounds)" do
+      it "returns nil" do
+        expect(helper_class.grid_to_chess_coordinates([1,8])).to be_nil
       end
     end
   end
