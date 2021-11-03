@@ -27,21 +27,51 @@ describe ChessHelper do
   describe "#chess_to_grid_coordinates" do
     let(:helper_class){ Class.new { extend ChessHelper }}
 
-    context "when receiving 'c7'" do
+    context "when position = 'c7'" do
       it "returns [1,2]" do
         expect(helper_class.chess_to_grid_coordinates("c7")).to eql([1,2])
       end
     end
 
-    context "when receiving 'h3'" do
+    context "when position = 'c 7'" do
+      it "returns [1,2]" do
+        expect(helper_class.chess_to_grid_coordinates("c 7")).to eql([1,2])
+      end
+    end
+
+    context "when position = 'h3'" do
       it "returns [5,7]" do
         expect(helper_class.chess_to_grid_coordinates("h3")).to eql([5,7])
       end
     end
 
-    context "when receiving 'f5'" do
+    context "when position = 'f5'" do
       it "returns [3,5]" do
         expect(helper_class.chess_to_grid_coordinates("f5")).to eql([3,5])
+      end
+    end
+
+    context "when position = [3,4]" do
+      it "returns nil" do
+        expect(helper_class.chess_to_grid_coordinates([3,4])).to be_nil
+      end
+    end
+
+    context "when position = 'a9'" do
+      it "returns nil" do
+        expect(helper_class.chess_to_grid_coordinates('a9')).to be_nil
+      end
+    end
+
+    context "when position = 'j7'" do
+      it "returns nil" do
+        expect(helper_class.chess_to_grid_coordinates('j7')).to be_nil
+      end
+    end
+
+    context "when position = 'a13'" do
+      it "returns nil" do
+        expect(helper_class.chess_to_grid_coordinates('a13')).to be_nil
       end
     end
   end
