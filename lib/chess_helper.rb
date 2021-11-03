@@ -29,7 +29,7 @@ module ChessHelper
   end
 
   def in_grid_coords?(pos)
-    return pos.is_a?(Array) && pos.length == 2
+    return pos.is_a?(Array) && pos.length == 2 &&
       pos.all? { |coord| coord.is_a?(Integer) && coord.between?(0,7)}
   end
 
