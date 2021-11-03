@@ -69,18 +69,25 @@ class Board
       new_row_index, new_col_index = end_pos
       piece_to_take = @grid[new_row_index][new_col_index]
 
-      if piece_to_take
-        if @black_pieces.include?(piece_to_take)
-          @black_pieces.delete(piece_to_take)
-        else
-          @white_pieces.delete(piece_to_take)
-        end
-      end
+      take_piece(piece_to_take)
       
       @grid[row_index][col_index] = nil
       @grid[new_row_index][new_col_index] = piece
       piece.set_pos(end_pos)  #side effects happen here
+      #remove any ghost piece of other color
       true
+    end
+  end
+
+  def take_piece(piece_to_take)
+    if piece_to_take && piece_to_take.is_a?(Piece)
+      if @black_pieces.include?(piece_to_take)
+        @black_pieces.delete(piece_to_take)
+      elsif @white_pieces.include?(piece_to_take)
+        @white_pieces.delete(piece_to_take)
+        #elsif piece_to_take is ghost piece
+        #take_piece(ghost_piece.parent_piece)
+      end
     end
   end
 
