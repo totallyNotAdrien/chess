@@ -7,7 +7,7 @@ class Chess
   def initialize(moves = [])
     @board = Board.new
     @players = {WHITE=>[], BLACK=>[]}
-    @board.setup_new_board
+    @board.set_up_new_board
     #@player_index
     #do stuff with moves
   end

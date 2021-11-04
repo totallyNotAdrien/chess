@@ -1,5 +1,5 @@
 require_relative "chess.rb"
 
 board = Board.new
-board.setup_new_board
+board.set_up_new_board
 board.display

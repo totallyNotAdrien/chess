@@ -15,7 +15,7 @@ class Board
     @white_pieces = []
   end
 
-  def setup_new_board
+  def set_up_new_board
     first_rank_classes = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
     #black's first rank

@@ -35,4 +35,8 @@ class Piece
     @prev_position = @position
     @position = grid_to_chess_coordinates(pos) || pos
   end
+
+  def self.subs
+    ObjectSpace.each_object(Class).select{|sub| sub < self}
+  end
 end
