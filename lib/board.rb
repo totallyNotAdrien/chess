@@ -56,7 +56,9 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
-    return false unless in_chess_coords?(start_pos) || in_grid_coords?(start_pos)
+    both_in_valid_format = in_chess_coords?(start_pos) || in_grid_coords?(start_pos) &&
+      in_chess_coords?(end_pos) || in_grid_coords?(end_pos)
+    return false unless both_in_valid_format
     
     start_pos = chess_to_grid_coordinates(start_pos) if in_chess_coords?(start_pos)
     row_index, col_index = start_pos
@@ -67,9 +69,9 @@ class Board
 
     if piece.valid_move?(end_pos)
       new_row_index, new_col_index = end_pos
-      piece_to_take = @grid[new_row_index][new_col_index]
+      piece_to_capture = @grid[new_row_index][new_col_index]
 
-      take_piece(piece_to_take)
+      capture_piece(piece_to_capture)
       
       @grid[row_index][col_index] = nil
       @grid[new_row_index][new_col_index] = piece
@@ -79,14 +81,14 @@ class Board
     end
   end
 
-  def take_piece(piece_to_take)
-    if piece_to_take && piece_to_take.is_a?(Piece)
-      if @black_pieces.include?(piece_to_take)
-        @black_pieces.delete(piece_to_take)
-      elsif @white_pieces.include?(piece_to_take)
-        @white_pieces.delete(piece_to_take)
-        #elsif piece_to_take is ghost piece
-        #take_piece(ghost_piece.parent_piece)
+  def capture_piece(piece_to_capture)
+    if piece_to_capture && piece_to_capture.is_a?(Piece)
+      if @black_pieces.include?(piece_to_capture)
+        @black_pieces.delete(piece_to_capture)
+      elsif @white_pieces.include?(piece_to_capture)
+        @white_pieces.delete(piece_to_capture)
+        #elsif piece_to_capture is ghost piece
+        #capture_piece(ghost_piece.parent_piece)
       end
     end
   end
