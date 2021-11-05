@@ -165,5 +165,28 @@ describe Board do
         end
       end
     end
+
+    context "when either start_pos or end_pos are in an invalid format" do
+      before(:each) do
+        @board = newly_set_up_board
+      end
+      context "if start_pos is invalid" do
+        it "returns false" do
+          expect(@board.move_piece("a31", "a5")).to be(false)
+        end
+        it "returns false" do
+          expect(@board.move_piece([1,2,1,4], [1,4])).to be(false)
+        end
+      end
+
+      context "if end_pos is invalid" do
+        it "returns false" do
+          expect(@board.move_piece("a2", "h57")).to be(false)
+        end
+        it "returns false" do
+          expect(@board.move_piece([2,3], [2,3,2,5])).to be(false)
+        end
+      end
+    end
   end
 end

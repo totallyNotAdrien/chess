@@ -56,8 +56,8 @@ class Board
   end
 
   def move_piece(start_pos, end_pos)
-    both_in_valid_format = in_chess_coords?(start_pos) || in_grid_coords?(start_pos) &&
-      in_chess_coords?(end_pos) || in_grid_coords?(end_pos)
+    both_in_valid_format = (in_chess_coords?(start_pos) || in_grid_coords?(start_pos)) &&
+      (in_chess_coords?(end_pos) || in_grid_coords?(end_pos))
     return false unless both_in_valid_format
     
     start_pos = chess_to_grid_coordinates(start_pos) if in_chess_coords?(start_pos)
