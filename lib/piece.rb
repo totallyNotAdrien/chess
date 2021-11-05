@@ -3,7 +3,7 @@ require_relative "chess_helper.rb"
 class Piece
   include ChessHelper
 
-  attr_reader :color
+  attr_reader :color, :position
 
   def initialize(board, position, color = WHITE)
     if in_grid_coords?(position)
@@ -16,6 +16,11 @@ class Piece
     @position = position
     @prev_position = []
     @color = color
+    @forward = color == WHITE ? -1 : 1
+    @backward = -@forward
+    @left = @forward
+    @right = -@left
+    @moved = false
   end
 
   def moves
@@ -28,16 +33,24 @@ class Piece
   end
 
   def valid_move?(pos)
-    puts "Yo! I got called!"
-    false  #temporary
+    #puts "Yo! I got called!"
+    true  #temporary
   end
 
   def set_pos(pos)
     @prev_position = @position
     @position = grid_to_chess_coordinates(pos) || pos
+    @moved = true
   end
 
   def self.subs
     ObjectSpace.each_object(Class).select{|sub| sub < self}
+  end
+
+  protected
+
+  def add_to_arr_if_valid_grid_pos(arr, row_index, col_index)
+    new_chess_pos = grid_to_chess_coordinates([row_index, col_index])
+    out.push(new_chess_pos) if new_chess_pos
   end
 end
