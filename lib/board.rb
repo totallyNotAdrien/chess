@@ -79,7 +79,7 @@ class Board
     @grid[new_row_index][new_col_index] = piece
     piece.set_pos(end_pos)  #side effects happen here
     #remove any ghost piece of other color
-    return true
+    true
   end
 
   def capture_piece(piece_to_capture)

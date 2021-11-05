@@ -28,6 +28,7 @@ class Piece
   end
 
   def valid_move?(pos)
+    puts "Yo! I got called!"
     false  #temporary
   end
 

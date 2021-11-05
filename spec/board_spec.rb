@@ -91,13 +91,15 @@ describe Board do
     end
 
     before(:each) do
-      Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(true) }
+      @board = newly_set_up_board
+      @grid = @board.grid
+      pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+      pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
     end
 
     context "when start_pos and end_pos are in valid formats" do
       context "if there is no piece at end_pos" do
         before(:each) do
-          @board = newly_set_up_board
           @start_pos = "g2"
           @end_pos = "g4"
           @grid = @board.grid
@@ -106,7 +108,6 @@ describe Board do
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
           @piece_to_move = @grid[@row_index_start][@col_index_start]
-          Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(true) }
         end
 
         it "sets grid space at piece's old position to nil" do
@@ -131,14 +132,17 @@ describe Board do
 
       context "if there is an opposing piece at end_pos" do
         before(:each) do
-          @board = newly_set_up_board
           @start_pos = "e4"
           @end_pos = "d5"
           @grid = @board.grid
           @grid[4][7] = nil
           @grid[3][1] = nil
-          @grid[4][4] = Pawn.new(@board, "e4", Board::WHITE)
-          @grid[3][3] = Pawn.new(@board, "d5", Board::BLACK)
+          white_pawn = Pawn.new(@board, "e4", Board::WHITE)
+          black_pawn = Pawn.new(@board, "d5", Board::BLACK)
+          allow(white_pawn).to receive(:valid_move?).and_return(true)
+          allow(black_pawn).to receive(:valid_move?).and_return(true)
+          @grid[4][4] = white_pawn
+          @grid[3][3] = black_pawn
 
           start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
           end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
@@ -184,8 +188,9 @@ describe Board do
 
       context "if move is not valid" do
         before(:each) do
-          Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(false) }
-          @board = newly_set_up_board
+          @grid = @board.grid
+          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+          pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(false)}
         end
         it "returns false" do
           expect(@board.move_piece("a2", "g7")).to be(false)
