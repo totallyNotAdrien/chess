@@ -67,18 +67,19 @@ class Board
     return false unless piece
     end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
-    if piece.valid_move?(end_pos)
-      new_row_index, new_col_index = end_pos
-      piece_to_capture = @grid[new_row_index][new_col_index]
+    return false unless piece.valid_move?(end_pos)
 
-      capture_piece(piece_to_capture)
-      
-      @grid[row_index][col_index] = nil
-      @grid[new_row_index][new_col_index] = piece
-      piece.set_pos(end_pos)  #side effects happen here
-      #remove any ghost piece of other color
-      true
-    end
+    #valid move
+    new_row_index, new_col_index = end_pos
+    piece_to_capture = @grid[new_row_index][new_col_index]
+
+    capture_piece(piece_to_capture)
+    
+    @grid[row_index][col_index] = nil
+    @grid[new_row_index][new_col_index] = piece
+    piece.set_pos(end_pos)  #side effects happen here
+    #remove any ghost piece of other color
+    return true
   end
 
   def capture_piece(piece_to_capture)

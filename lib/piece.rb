@@ -28,7 +28,7 @@ class Piece
   end
 
   def valid_move?(pos)
-    true  #temporary
+    false  #temporary
   end
 
   def set_pos(pos)

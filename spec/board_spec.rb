@@ -94,74 +94,101 @@ describe Board do
       Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(true) }
     end
 
-    context "when start_pos and end_pos are valid" do
+    context "when start_pos and end_pos are in valid formats" do
       context "if there is no piece at end_pos" do
         before(:each) do
+          @board = newly_set_up_board
           @start_pos = "g2"
           @end_pos = "g4"
-          @grid = newly_set_up_board.grid
-          start_pos_grid = newly_set_up_board.chess_to_grid_coordinates(@start_pos)
-          end_pos_grid = newly_set_up_board.chess_to_grid_coordinates(@end_pos)
+          @grid = @board.grid
+          start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
+          end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
           @piece_to_move = @grid[@row_index_start][@col_index_start]
+          Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(true) }
         end
 
         it "sets grid space at piece's old position to nil" do
-          expect_stuff = expect { newly_set_up_board.move_piece(@start_pos, @end_pos) }
+          expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
           expect_stuff.to change { @grid[@row_index_start][@col_index_start] }.to(nil)
         end
 
         it "sets grid space at end position to piece" do
-          expect_stuff = expect { newly_set_up_board.move_piece(@start_pos, @end_pos) }
+          expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
           expect_stuff.to change { @grid[@row_index_end][@col_index_end] }.to(@piece_to_move)
         end
 
         it "does not capture any pieces" do
-          expect(newly_set_up_board).to receive(:capture_piece).with(nil)
-          newly_set_up_board.move_piece(@start_pos, @end_pos)
+          expect(@board).to receive(:capture_piece).with(nil)
+          @board.move_piece(@start_pos, @end_pos)
         end
 
         it "returns true" do
-          expect(newly_set_up_board.move_piece(@start_pos, @end_pos)).to be(true)
+          expect(@board.move_piece(@start_pos, @end_pos)).to be(true)
         end
       end
 
       context "if there is an opposing piece at end_pos" do
         before(:each) do
+          @board = newly_set_up_board
           @start_pos = "e4"
           @end_pos = "d5"
-          @grid = newly_set_up_board.grid
+          @grid = @board.grid
           @grid[4][7] = nil
           @grid[3][1] = nil
-          @grid[4][4] = Pawn.new(newly_set_up_board, "e4", Board::WHITE)
-          @grid[3][3] = Pawn.new(newly_set_up_board, "d5", Board::BLACK)
+          @grid[4][4] = Pawn.new(@board, "e4", Board::WHITE)
+          @grid[3][3] = Pawn.new(@board, "d5", Board::BLACK)
 
-          start_pos_grid = newly_set_up_board.chess_to_grid_coordinates(@start_pos)
-          end_pos_grid = newly_set_up_board.chess_to_grid_coordinates(@end_pos)
+          start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
+          end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
           @piece_to_move = @grid[@row_index_start][@col_index_start]
         end
 
         it "sets grid space at piece's old position to nil" do
-          expect_stuff = expect { newly_set_up_board.move_piece(@start_pos, @end_pos) }
+          expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
           expect_stuff.to change { @grid[@row_index_start][@col_index_start] }.to(nil)
         end
 
         it "captures piece at end_pos" do
           piece_to_capture = @grid[@row_index_end][@col_index_end]
-          expect(newly_set_up_board).to receive(:capture_piece).with(piece_to_capture)
-          newly_set_up_board.move_piece(@start_pos, @end_pos)
+          expect(@board).to receive(:capture_piece).with(piece_to_capture)
+          @board.move_piece(@start_pos, @end_pos)
         end
 
         it "sets grid space at end position to piece" do
-          expect_stuff = expect { newly_set_up_board.move_piece(@start_pos, @end_pos) }
+          expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
           expect_stuff.to change { @grid[@row_index_end][@col_index_end] }.to(@piece_to_move)
         end
 
         it "returns true" do
-          expect(newly_set_up_board.move_piece(@start_pos, @end_pos)).to be(true)
+          expect(@board.move_piece(@start_pos, @end_pos)).to be(true)
+        end
+      end
+
+      context "if there is no piece at start_pos" do
+        before(:each) do
+          @board = newly_set_up_board
+        end
+
+        it "returns false" do
+          expect(@board.move_piece("a3","a4")).to be(false)
+        end
+
+        it "returns false" do
+          expect(@board.move_piece([5,0], [4,0])).to be(false)
+        end
+      end
+
+      context "if move is not valid" do
+        before(:each) do
+          Piece.subs.each { |sub| allow_any_instance_of(sub).to receive(:valid_move?).and_return(false) }
+          @board = newly_set_up_board
+        end
+        it "returns false" do
+          expect(@board.move_piece("a2", "g7")).to be(false)
         end
       end
     end
