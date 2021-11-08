@@ -14,6 +14,6 @@ def m(start_pos, end_pos)
   moved
 end
 
-m("a2", "a4")
-m("a4", "a5")
-m("a5", "a6")
+# m("a2", "a4")
+# m("a4", "a5")
+# m("a5", "a6")

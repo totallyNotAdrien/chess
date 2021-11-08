@@ -45,9 +45,4 @@ class Pawn < Piece
     out.push(new_chess_pos) if new_chess_pos && other_piece_valid
     out
   end
-
-  def valid_move?(pos)
-    pos = grid_to_chess_coordinates(pos) || pos
-    moves.include?(pos)
-  end
 end

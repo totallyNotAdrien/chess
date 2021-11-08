@@ -33,8 +33,14 @@ class Piece
   end
 
   def valid_move?(pos)
-    #puts "Yo! I got called!"
-    true  #temporary
+    implemented = [Pawn]
+    
+    unless implemented.include?(self.class)
+      return true #temporary
+    end
+
+    pos = grid_to_chess_coordinates(pos) || pos
+    moves.include?(pos)
   end
 
   def set_pos(pos)
