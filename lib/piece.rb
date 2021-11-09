@@ -14,7 +14,7 @@ class Piece
     end
     @board = board
     @position = position
-    @prev_position = []
+    @prev_position = nil
     @color = color
     @forward = color == WHITE ? -1 : 1
     @backward = -@forward

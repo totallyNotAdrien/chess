@@ -4,7 +4,7 @@ Dir["./lib/pieces/*.rb"].each {|file| require file}
 class Board
   include ChessHelper
 
-  attr_reader :grid, :black_pieces, :white_pieces
+  attr_reader :grid, :black_pieces, :white_pieces, :ghost_pawn
 
   def initialize(moves = [])
     #grid 8x8 array
@@ -13,6 +13,7 @@ class Board
     @grid = Array.new(@rows){Array.new(@cols)}
     @black_pieces = []
     @white_pieces = []
+    @ghost_pawn = nil
   end
 
   def set_up_new_board
@@ -78,7 +79,9 @@ class Board
     @grid[row_index][col_index] = nil
     @grid[new_row_index][new_col_index] = piece
     piece.set_pos(end_pos)  #side effects happen here
-    #remove any ghost piece of other color
+    if @ghost_pawn && @ghost_pawn.color != piece.color
+      @ghost_pawn = nil
+    end
     true
   end
 
@@ -111,7 +114,11 @@ class Board
         space_str = " #{piece_symbol} "
 
         if piece
-          space_str = piece.color == BLACK ? space_str.black : space_str.white
+          if piece.is_a?(GhostPawn)
+            space_str = piece.color == BLACK ? space_str.gray : space_str.peach 
+          else
+            space_str = piece.color == BLACK ? space_str.black : space_str.white
+          end
         end
         grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
@@ -119,7 +126,6 @@ class Board
         bg_color = (bg_color + 1) % 2
       end
       output += "#{row_out}\n"
-      #output += (" " * 3) + "#{grid_row_separator}\n" unless row_index == @rows - 1
     end
 
     puts output
@@ -130,6 +136,21 @@ class Board
       col_num_output += "#{letter}" + (" " * 2)
     end
     puts col_num_output
+  end
+
+  def ghost_pawn=(ghost)
+    return unless ghost
+
+    if @ghost_pawn
+      curr_pawn_pos = chess_to_grid_coordinates(@ghost_pawn.position)
+      row_index, col_index = curr_pawn_pos
+      @grid[row_index][col_index] = nil
+    end
+
+    pos = chess_to_grid_coordinates(ghost.position) || ghost.position
+    row_index, col_index = pos
+    @ghost_pawn = ghost
+    @grid[row_index][col_index] = ghost
   end
 
   def color_space(contents, color_index)

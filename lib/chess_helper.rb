@@ -71,6 +71,14 @@ class String
     colorize(33)
   end
 
+  def gray
+    colorize(90)
+  end
+
+  def peach
+    colorize(91)
+  end
+
   def on_red
     colorize(41)
   end

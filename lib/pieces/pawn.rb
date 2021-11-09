@@ -9,6 +9,24 @@ class Pawn < Piece
     "\u265f"
   end
 
+  def set_pos(pos)
+    @prev_position = grid_to_chess_coordinates(@position) || @position
+    @position = grid_to_chess_coordinates(pos) || pos
+
+    grid_pos = chess_to_grid_coordinates(@position) || @position
+    row_index, col_index = grid_pos
+    
+    prev_grid_pos = chess_to_grid_coordinates(@prev_position)
+    prev_row_index, prev_col_index = prev_grid_pos
+
+    if (row_index - prev_row_index).abs == 2
+      row_index = row_index + @backward
+      ghost_pos = grid_to_chess_coordinates([row_index, col_index])
+      @board.ghost_pawn = GhostPawn.new(@board, ghost_pos, self, color)
+    end
+    @moved = true
+  end
+
   def moves
     out = []
     row_index, col_index = chess_to_grid_coordinates(@position) || @position
