@@ -196,6 +196,22 @@ describe Board do
           expect(@board.move_piece("a2", "g7")).to be(false)
         end
       end
+
+      context "if piece at start_pos is a Ghost Pawn" do
+        before(:each) do
+          @board = newly_set_up_board
+          b_queen = @board.grid[0][3]
+          allow(b_queen).to receive(:valid_move?).and_return(true)
+
+          @board.move_piece("d8","d4")
+          @board.move_piece("e2","e4")
+          #@board.display      #uncomment to show setup
+        end
+
+        it "returns false" do
+          expect(@board.move_piece("e3","d4"))
+        end
+      end
     end
 
     context "when either start_pos or end_pos are in an invalid format" do

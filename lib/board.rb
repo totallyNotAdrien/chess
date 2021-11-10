@@ -66,6 +66,7 @@ class Board
     piece = @grid[row_index][col_index]
 
     return false unless piece
+    return false if piece.is_a?(GhostPawn)
     end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
     return false unless piece.valid_move?(end_pos)

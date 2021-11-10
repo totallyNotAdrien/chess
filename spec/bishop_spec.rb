@@ -84,7 +84,7 @@ describe Bishop do
         @board.move_piece("f1","c4")
         @board.move_piece("e7","e5")
         @piece = @grid[4][2]
-        @board.display      #uncomment to show setup
+        #@board.display      #uncomment to show setup
       end
       
       it "cannot take the ghost pawn" do
