@@ -80,7 +80,7 @@ class Board
     @grid[new_row_index][new_col_index] = piece
     piece.set_pos(end_pos)  #side effects happen here
     if @ghost_pawn && @ghost_pawn.color != piece.color
-      @ghost_pawn = nil
+      reset_ghost_pawn
     end
     true
   end
@@ -91,8 +91,9 @@ class Board
         @black_pieces.delete(piece_to_capture)
       elsif @white_pieces.include?(piece_to_capture)
         @white_pieces.delete(piece_to_capture)
-        #elsif piece_to_capture is ghost piece
-        #capture_piece(ghost_piece.parent_piece)
+      elsif piece_to_capture.is_a?(GhostPawn)
+        capture_piece(@ghost_pawn.parent_piece)
+        reset_ghost_pawn
       end
     end
   end
@@ -141,11 +142,7 @@ class Board
   def ghost_pawn=(ghost)
     return unless ghost
 
-    if @ghost_pawn
-      curr_pawn_pos = chess_to_grid_coordinates(@ghost_pawn.position)
-      row_index, col_index = curr_pawn_pos
-      @grid[row_index][col_index] = nil
-    end
+    reset_ghost_pawn if @ghost_pawn
 
     pos = chess_to_grid_coordinates(ghost.position) || ghost.position
     row_index, col_index = pos
@@ -169,6 +166,15 @@ class Board
   def grid_row_separator
     thing = "+ #{em * 2} "
     " #{em * 2} #{thing * (@cols - 1)}"
+  end
+
+  private
+
+  def reset_ghost_pawn
+    curr_pawn_pos = chess_to_grid_coordinates(@ghost_pawn.position)
+    row_index, col_index = curr_pawn_pos
+    @grid[row_index][col_index] = nil
+    @ghost_pawn = nil
   end
 end
 

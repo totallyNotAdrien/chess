@@ -33,6 +33,8 @@ class Bishop < Piece
 
       break unless new_pos = grid_to_chess_coordinates([new_row_index, new_col_index])
       piece_at_new_pos = @board.grid[new_row_index][new_col_index]
+      
+      return if piece_at_new_pos.is_a?(GhostPawn)
 
       if piece_at_new_pos
         if piece_at_new_pos.color == @color
