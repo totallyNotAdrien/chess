@@ -74,5 +74,22 @@ describe Bishop do
         expect(@piece.moves).to contain_exactly("f1", "f3", "e4", "h3")
       end
     end
+
+    context "when an enemy ghost pawn is in path" do
+      before(:each) do
+        @board = newly_set_up_board
+        @grid = @board.grid
+
+        @board.move_piece("e2","e3")
+        @board.move_piece("f1","c4")
+        @board.move_piece("e7","e5")
+        @piece = @grid[4][2]
+        @board.display      #uncomment to show setup
+      end
+      
+      it "cannot take the ghost pawn" do
+        expect(@piece.moves).not_to include("e6")
+      end
+    end
   end
 end
