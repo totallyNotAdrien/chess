@@ -3,6 +3,7 @@ require_relative "chess.rb"
 @board = Board.new
 @board.set_up_new_board
 @board.display
+@knight = @board.grid[7][6]
 
 def d
   @board.display
