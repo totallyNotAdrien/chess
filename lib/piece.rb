@@ -62,8 +62,8 @@ class Piece
 
   def long_directional_moves(move_arr, row_dir, col_dir)
     pos = chess_to_grid_coordinates(@position) || @position
-    row_dir /= row_dir.abs
-    col_dir /= col_dir.abs
+    row_dir /= row_dir.abs unless row_dir == 0
+    col_dir /= col_dir.abs unless col_dir == 0
 
     row_index, col_index = pos
     dist = 1
