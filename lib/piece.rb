@@ -59,4 +59,34 @@ class Piece
     new_chess_pos = grid_to_chess_coordinates([row_index, col_index])
     out.push(new_chess_pos) if new_chess_pos
   end
+
+  def long_directional_moves(move_arr, row_dir, col_dir)
+    pos = chess_to_grid_coordinates(@position) || @position
+    row_dir /= row_dir.abs
+    col_dir /= col_dir.abs
+
+    row_index, col_index = pos
+    dist = 1
+    loop do
+      new_row_index = row_index + (row_dir * dist)
+      new_col_index = col_index + (col_dir * dist)
+
+      break unless new_pos = grid_to_chess_coordinates([new_row_index, new_col_index])
+      piece_at_new_pos = @board.grid[new_row_index][new_col_index]
+      
+      return if piece_at_new_pos.is_a?(GhostPawn)
+
+      if piece_at_new_pos
+        if piece_at_new_pos.color == @color
+          return
+        else
+          move_arr.push(new_pos)
+          return
+        end
+      end
+      
+      move_arr.push(new_pos) 
+      dist += 1
+    end
+  end
 end
