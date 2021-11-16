@@ -36,6 +36,23 @@ class King < Piece
 
     #castling stuff
     #goes here
+    row_index, col_index = chess_to_grid_coordinates(@position) || @position
+
+    kingside_rook = @board.grid[row_index][7]
+    kingside_others = @board.grid[row_index][(col_index + 1)..(col_index+2)]
+
+    queenside_rook = @board.grid[row_index][0]
+    queenside_others = @board.grid[row_index][(col_index - 1)..(col_index-3)]
+
+    if !moved && kingside_others.all?{|piece| piece == nil} && 
+      kingside_rook && !kingside_rook.moved
+      out.push([row_index, col_index + 2])
+    end
+
+    if !moved && queenside_others.all?{|piece| piece == nil} && 
+      queenside_rook && !queenside_rook.moved
+      out.push([row_index, col_index - 2])
+    end
 
     out.map!{|coords| grid_to_chess_coordinates(coords)}
     out
