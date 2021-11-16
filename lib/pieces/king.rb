@@ -25,7 +25,8 @@ class King < Piece
 
     out = []
     directions.each do |row_dir, col_dir|
-      out.push([row_index + row_dir, col_index + col_dir])
+      new_pos = [row_index + row_dir, col_index + col_dir]
+      out.push(new_pos) if in_grid_coords?(new_pos)
     end
 
     out.reject! do |row_index, col_index|
@@ -42,7 +43,7 @@ class King < Piece
     kingside_others = @board.grid[row_index][(col_index + 1)..(col_index+2)]
 
     queenside_rook = @board.grid[row_index][0]
-    queenside_others = @board.grid[row_index][(col_index - 1)..(col_index-3)]
+    queenside_others = @board.grid[row_index][(col_index - 3)..(col_index-1)]
 
     if !moved && kingside_others.all?{|piece| piece == nil} && 
       kingside_rook && !kingside_rook.moved
