@@ -61,8 +61,36 @@ class King < Piece
 
   #custom set_pos to do castling side effects
   def set_pos(pos)
-    @prev_position = @position
-    @position = grid_to_chess_coordinates(pos) || pos
-    @moved = true
+    row_index, col_index = chess_to_grid_coordinates(@position) || @position
+
+    new_row_index, new_col_index = chess_to_grid_coordinates(pos) || pos
+
+    #castling
+    if !moved && new_row_index == row_index && 
+      (new_col_index - col_index).abs == 2
+      rook_col = nil
+      new_rook_col = nil
+
+      rook = if new_col_index > col_index
+        rook_col = 7
+        new_rook_col = col_index + 1
+        @board.grid[row_index][rook_col]
+      else
+        rook_col = 0
+        new_rook_col = col_index - 1
+        @board.grid[row_index][rook_col]
+      end
+
+      if rook
+        @prev_position = @position
+        @position = grid_to_chess_coordinates(pos) || pos
+        @moved = true
+        @board.grid[row_index][rook_col] = nil
+        @board.grid[row_index][new_rook_col] = rook
+        rook.set_pos([row_index, new_rook_col])
+      end
+    else
+      super(pos)
+    end
   end
 end
