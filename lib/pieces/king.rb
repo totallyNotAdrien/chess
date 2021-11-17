@@ -82,15 +82,12 @@ class King < Piece
       end
 
       if rook
-        @prev_position = @position
-        @position = grid_to_chess_coordinates(pos) || pos
-        @moved = true
         @board.grid[row_index][rook_col] = nil
         @board.grid[row_index][new_rook_col] = rook
         rook.set_pos([row_index, new_rook_col])
       end
-    else
-      super(pos)
     end
+      
+    super(pos)
   end
 end

@@ -155,4 +155,60 @@ describe King do
       end
     end
   end
+
+  describe "#set_pos" do
+    let(:newly_set_up_board) do
+      board = Board.new
+      board.set_up_new_board
+      board
+    end
+
+    context "when performing valid castle move" do
+      before(:each) do
+        @board = newly_set_up_board
+        @grid = @board.grid
+        @king = @grid[7][4] #white's king
+      end
+
+      context "if castling kingside" do
+        before(:each) do
+         @kingside_rook = @grid[7][7]
+        end
+
+        it "sets rook's original board position to nil" do
+          expect{@king.set_pos("g1")}.to change{@grid[7][7]}.to(nil)
+        end
+
+        it "sets correct board position to rook" do
+          expect {@king.set_pos("g1")}.to change {@grid[7][5]}.to(@kingside_rook)
+        end
+
+        it "calls rook's set_pos with correct position" do
+          allow(@kingside_rook).to receive(:set_pos)
+          expect(@kingside_rook).to receive(:set_pos).with([7,5])
+          @king.set_pos("g1")
+        end
+      end
+      
+      context "if castling queenside" do
+        before(:each) do
+         @queenside_rook = @grid[7][0]
+        end
+
+        it "sets rook's original board position to nil" do
+          expect{@king.set_pos("c1")}.to change{@grid[7][0]}.to(nil)
+        end
+
+        it "sets correct board position to rook" do
+          expect {@king.set_pos("c1")}.to change {@grid[7][3]}.to(@queenside_rook)
+        end
+
+        it "calls rook's set_pos with correct position" do
+          allow(@queenside_rook).to receive(:set_pos)
+          expect(@queenside_rook).to receive(:set_pos).with([7,3])
+          @king.set_pos("c1")
+        end
+      end
+    end
+  end
 end
