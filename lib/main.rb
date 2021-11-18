@@ -16,6 +16,10 @@ def m(start_pos, end_pos)
   moved
 end
 
+@board[@knight.position] = nil
+@board["e4"] = @knight
+d
+
 # m("a2", "a4")
 # m("a4", "a5")
 # m("a5", "a6")

@@ -156,17 +156,27 @@ class Board
     contents.on_blue
   end
 
-  def colored_piece(thing)
-    "m"
+  def [](index)
+    if index.is_a?(Integer)
+      return @grid[index]
+    elsif index.is_a?(String)
+      row, col = chess_to_grid_coordinates(index)
+      if row && col
+        return @grid[row][col]
+      end
+    end
+    nil
   end
 
-  def em
-    "\u2014"
-  end
-
-  def grid_row_separator
-    thing = "+ #{em * 2} "
-    " #{em * 2} #{thing * (@cols - 1)}"
+  def []=(key, val)
+    if key.is_a?(String)
+      row, col = chess_to_grid_coordinates(key)
+      if row && col
+        @grid[row][col] = val
+        return val
+      end
+    end
+    nil
   end
 
   private
