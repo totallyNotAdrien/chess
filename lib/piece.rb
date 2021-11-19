@@ -37,7 +37,7 @@ class Piece
   end
 
   def valid_move?(pos)
-    implemented = [Pawn, Bishop, Knight, Queen]
+    implemented = [Pawn, Bishop, Knight, Queen, Rook, King]
     
     unless implemented.include?(self.class)
       return true #temporary

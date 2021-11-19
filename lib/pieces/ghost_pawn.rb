@@ -11,4 +11,8 @@ class GhostPawn < Piece
   def piece_symbol
     "\u265f"
   end
+
+  def valid_move?(pos)
+    false
+  end
 end

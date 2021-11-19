@@ -74,15 +74,14 @@ class Board
     #valid move
     new_row_index, new_col_index = end_pos
     piece_to_capture = @grid[new_row_index][new_col_index]
-
     capture_piece(piece_to_capture)
     
     @grid[row_index][col_index] = nil
     @grid[new_row_index][new_col_index] = piece
+
+    reset_ghost_pawn if @ghost_pawn
+
     piece.set_pos(end_pos)  #side effects happen here
-    if @ghost_pawn && @ghost_pawn.color != piece.color
-      reset_ghost_pawn
-    end
     true
   end
 
@@ -156,6 +155,26 @@ class Board
     contents.on_blue
   end
 
+  def under_attack_from_color?(color, position)
+    position = grid_to_chess_coordinates(position) || position
+
+    piece = nil
+    piece_is_temp = false
+    if self[position]
+      piece = self[position]
+    else
+      piece = Piece.new(self, position, (color + 1) % 2)
+      piece_is_temp = true
+      self[position] = piece
+    end
+    pieces_to_check_moves = color == BLACK ? @black_pieces : @white_pieces
+    
+    under_attack = pieces_to_check_moves.any?{|piece| piece.moves.include?(position)}
+    self[position] = nil if piece_is_temp
+
+    under_attack
+  end
+
   def [](index)
     if index.is_a?(Integer)
       return @grid[index]
@@ -182,6 +201,7 @@ class Board
   private
 
   def reset_ghost_pawn
+    return unless @ghost_pawn
     curr_pawn_pos = chess_to_grid_coordinates(@ghost_pawn.position)
     row_index, col_index = curr_pawn_pos
     @grid[row_index][col_index] = nil
