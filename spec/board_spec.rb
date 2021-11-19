@@ -237,4 +237,78 @@ describe Board do
       end
     end
   end
+
+  describe "#under_attack_from_color?" do
+    let(:newly_set_up_board) do
+      board = Board.new
+      board.set_up_new_board
+      board
+    end
+
+    before(:each) do
+      @board = newly_set_up_board
+      @grid = @board.grid
+    end
+    
+    context "when pos(e3) is empty space in the attack path of only white pieces" do
+      before(:each) do
+        #@board.display      #uncomment to show setup
+      end
+      it "is under attack from white" do
+        expect(@board).to be_under_attack_from_color(ChessHelper::WHITE, "e3")
+      end
+
+      it "is not under attack from black" do
+        expect(@board).not_to be_under_attack_from_color(ChessHelper::BLACK, "e3")
+      end
+    end
+    
+    context "when pos(e6) is empty space in the attack path of only black pieces" do
+      before(:each) do
+        #@board.display      #uncomment to show setup
+      end
+
+      it "is under attack from black" do
+        expect(@board).to be_under_attack_from_color(ChessHelper::BLACK, "e6")
+      end
+
+      it "is not under attack from white" do
+        expect(@board).not_to be_under_attack_from_color(ChessHelper::WHITE, "e6")
+      end
+    end
+    
+    context "when pos(f2) refers to white piece in the attack path of white and black pieces" do
+      before(:each) do
+        b_queen = @grid[0][3]
+        allow(b_queen).to receive(:valid_move?).and_return(true)
+        @board.move_piece("d8", "f3")
+        #@board.display      #uncomment to show setup
+      end
+
+      it "is under attack from black" do
+        expect(@board).to be_under_attack_from_color(ChessHelper::BLACK, "f2")
+      end
+
+      it "is not under attack from white" do
+        expect(@board).not_to be_under_attack_from_color(ChessHelper::WHITE, "f2")
+      end
+    end
+    
+    context "when pos(f7) refers to black piece in the attack path of white and black pieces" do
+      before(:each) do
+        w_queen = @grid[7][3]
+        allow(w_queen).to receive(:valid_move?).and_return(true)
+        @board.move_piece("d1", "f6")
+        #@board.display      #uncomment to show setup
+      end
+
+      it "is under attack from white" do
+        expect(@board).to be_under_attack_from_color(ChessHelper::WHITE, "f7")
+      end
+
+      it "is not under attack from black" do
+        expect(@board).not_to be_under_attack_from_color(ChessHelper::BLACK, "f7")
+      end
+    end
+  end
 end
