@@ -169,7 +169,14 @@ class Board
     end
     pieces_to_check_moves = color == BLACK ? @black_pieces : @white_pieces
     
-    under_attack = pieces_to_check_moves.any?{|piece| piece.moves.include?(position)}
+    under_attack = pieces_to_check_moves.any? do |piece| 
+      if piece.is_a?(King)
+        positions_around = piece.basic_valid_moves_in_chess_coords
+        positions_around.include?(position)
+      else
+        piece.moves.include?(position)
+      end
+    end
     self[position] = nil if piece_is_temp
 
     under_attack
