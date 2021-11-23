@@ -26,7 +26,7 @@ class King < Piece
       [@backward, 0],
       [@backward, @left],
       [0, @left],
-      [@forward, @left]
+      [@forward, @left],
     ]
 
     row_index, col_index = chess_to_grid_coordinates(@position) || @position
@@ -50,7 +50,7 @@ class King < Piece
   end
 
   def basic_valid_moves_in_chess_coords
-    basic_valid_moves_in_grid_coords.map{|coords| grid_to_chess_coordinates(coords)}
+    basic_valid_moves_in_grid_coords.map { |coords| grid_to_chess_coordinates(coords) }
   end
 
   #custom set_pos to do castling side effects
@@ -88,34 +88,37 @@ class King < Piece
   private
 
   def add_possible_castling(out)
+    return if @board.in_check?(@color)
+    return if @moved
+
     #castling stuff
     row_index, col_index = chess_to_grid_coordinates(@position) || @position
 
     #kingside_castle
     kingside_rook = @board.grid[row_index][7]
     kingside_others = @board.grid[row_index][(col_index + 1)..(col_index + 2)]
-    kingside_positions = (0..2).map { |offset| [row_index, col_index + offset] }
+    kingside_positions = (1..2).map { |offset| [row_index, col_index + offset] }
 
     kingside_under_attack = kingside_positions.any? do |pos|
       @board.under_attack_from_color?((@color + 1) % 2, pos)
     end
 
-    if !moved && kingside_others.all? { |piece| piece == nil } &&
-      kingside_rook && !kingside_rook.moved && !kingside_under_attack
+    if kingside_others.all? { |piece| piece == nil } &&
+       kingside_rook && !kingside_rook.moved && !kingside_under_attack
       out.push([row_index, col_index + 2])
     end
 
     #queenside castle
     queenside_rook = @board.grid[row_index][0]
     queenside_others = @board.grid[row_index][(col_index - 3)..(col_index - 1)]
-    queenside_positions = (-2..0).map { |offset| [row_index, col_index + offset] }
+    queenside_positions = (-2..-1).map { |offset| [row_index, col_index + offset] }
 
     queenside_under_attack = queenside_positions.any? do |pos|
       @board.under_attack_from_color?((@color + 1) % 2, pos)
     end
 
-    if !moved && queenside_others.all? { |piece| piece == nil } &&
-      queenside_rook && !queenside_rook.moved && !queenside_under_attack
+    if queenside_others.all? { |piece| piece == nil } &&
+       queenside_rook && !queenside_rook.moved && !queenside_under_attack
       out.push([row_index, col_index - 2])
     end
   end

@@ -24,6 +24,7 @@ class Board
     col_index = 0
     for piece_class in first_rank_classes
       piece = piece_class.new(self, [row_index, col_index], BLACK)
+      @black_king = piece if piece.is_a?(King)
       @grid[row_index][col_index] = piece
       @black_pieces.push(piece)
       col_index += 1
@@ -42,6 +43,7 @@ class Board
     col_index = 0
     for piece_class in first_rank_classes
       piece = piece_class.new(self, [row_index, col_index], WHITE)
+      @white_king = piece if piece.is_a?(King)
       @grid[row_index][col_index] = piece
       @white_pieces.push(piece)
       col_index += 1
@@ -180,6 +182,11 @@ class Board
     self[position] = nil if piece_is_temp
 
     under_attack
+  end
+
+  def in_check?(color)
+    position = (color == WHITE) ? @white_king.position : @black_king.position
+    under_attack_from_color?((color + 1) % 2, position)
   end
 
   def [](index)

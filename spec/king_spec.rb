@@ -252,6 +252,42 @@ describe King do
           expect(@piece.moves).not_to include("c1")
         end
       end
+
+      context "when king is in check" do
+        before(:each) do
+          @board = newly_set_up_board
+          @grid = @board.grid
+          @piece = @grid[7][4] #white's king
+          @b_queen = @grid[0][3]
+          allow(@b_queen).to receive(:valid_move?).and_return(true)
+
+          queenside_pieces = @grid[7][1..3]
+          queenside_pieces.each{|piece| allow(piece).to receive(:valid_move?).and_return(true)}
+          kingside_pieces = @grid[7][5..6]
+          kingside_pieces.each{|piece| allow(piece).to receive(:valid_move?).and_return(true)}
+        end
+
+        it "cannot castle (kingside)" do
+          @board.move_piece("d8", "h4")
+          @board.move_piece("f2", "f3")
+          @board.move_piece("f1", "f4")
+          @board.move_piece("g1", "g4")
+          #@board.display      #uncomment to show setup
+
+          expect(@piece.moves).not_to include("g1")
+        end
+
+        it "cannot castle (queenside)" do
+          @board.move_piece("d8", "a5")
+          @board.move_piece("d2", "d3")
+          @board.move_piece("d1", "d4")
+          @board.move_piece("c1", "c4")
+          @board.move_piece("b1", "b3")
+          #@board.display      #uncomment to show setup
+
+          expect(@piece.moves).not_to include("c1")
+        end
+      end
     end
   end
 
