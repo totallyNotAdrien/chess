@@ -282,7 +282,7 @@ describe Board do
         b_queen = @grid[0][3]
         allow(b_queen).to receive(:valid_move?).and_return(true)
         @board.move_piece("d8", "f3")
-        @board.display      #uncomment to show setup
+        #@board.display      #uncomment to show setup
       end
 
       it "is under attack from black" do

@@ -166,6 +166,13 @@ describe King do
           #@board.display      #uncomment to show setup
           expect(@piece.moves).not_to include("c1", "g1")
         end
+
+        it "cannot castle" do
+          @board.move_piece("c1", "c3")
+          @board.move_piece("d1", "d3")
+          #@board.display      #uncomment to show setup
+          expect(@piece.moves).not_to include("c1", "g1")
+        end
       end
 
       context "when a space King passes through or lands on is under attack, kingside" do
