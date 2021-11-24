@@ -39,7 +39,7 @@ class Knight < Piece
     out.reject! do |row, col|
       piece_at_pos = @board.grid[row][col]
       piece_at_pos &&
-        (piece_at_pos.color == @color || piece_at_pos.is_a?(GhostPawn))
+        (piece_at_pos.color == @color || @board.en_passant[piece_at_pos.position])
     end
 
     out.map!{|coords| grid_to_chess_coordinates(coords)}

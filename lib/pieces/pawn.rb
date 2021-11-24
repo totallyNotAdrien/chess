@@ -21,8 +21,8 @@ class Pawn < Piece
 
     if (row_index - prev_row_index).abs == 2
       row_index = row_index + @backward
-      ghost_pos = grid_to_chess_coordinates([row_index, col_index])
-      @board.ghost_pawn = GhostPawn.new(@board, ghost_pos, self, color)
+      en_passant_pos = grid_to_chess_coordinates([row_index, col_index])
+      @board.set_en_passant(en_passant_pos, self)
     end
     @moved = true
   end
@@ -53,14 +53,18 @@ class Pawn < Piece
     new_chess_pos = grid_to_chess_coordinates(diag_left)
     other_piece = @board.grid[diag_left[0]][diag_left[1]]
     other_piece_valid = other_piece && other_piece.color != @color
-    out.push(new_chess_pos) if new_chess_pos && other_piece_valid
+    en_passant_piece = @board.en_passant[new_chess_pos]
+    en_passant = en_passant_piece && en_passant_piece.color != @color
+    out.push(new_chess_pos) if new_chess_pos && (other_piece_valid || en_passant)
 
     #right
     diag_right = [row_index + @forward, col_index + @right]
     new_chess_pos = grid_to_chess_coordinates(diag_right)
     other_piece = @board.grid[diag_right[0]][diag_right[1]]
     other_piece_valid = other_piece && other_piece.color != @color
-    out.push(new_chess_pos) if new_chess_pos && other_piece_valid
+    en_passant_piece = @board.en_passant[new_chess_pos]
+    en_passant = en_passant_piece && en_passant_piece.color != @color
+    out.push(new_chess_pos) if new_chess_pos && (other_piece_valid || en_passant)
     out
   end
 end

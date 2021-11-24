@@ -27,14 +27,6 @@ describe King do
       expect(@piece.moves).not_to include("d2", "e2", "f2")
     end
 
-    it "cannot take ghost pawns" do
-      @board.move_piece("e1", "e6")
-      @board.move_piece("f7", "f5")
-      #@board.display      #uncomment to show setup
-      expect(@piece.moves).not_to include("f6")
-    end
-
-
     context "when all spaces around it are empty" do
       it "can move to 8 spaces" do
         @board.move_piece("e1","d5")

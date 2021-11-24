@@ -121,7 +121,7 @@ describe Board do
         end
 
         it "does not capture any pieces" do
-          expect(@board).to receive(:capture_piece).with(nil)
+          expect(@board).to receive(:capture_piece).with(@piece_to_move, nil)
           @board.move_piece(@start_pos, @end_pos)
         end
 
@@ -158,7 +158,7 @@ describe Board do
 
         it "captures piece at end_pos" do
           piece_to_capture = @grid[@row_index_end][@col_index_end]
-          expect(@board).to receive(:capture_piece).with(piece_to_capture)
+          expect(@board).to receive(:capture_piece).with(@piece_to_move, piece_to_capture)
           @board.move_piece(@start_pos, @end_pos)
         end
 

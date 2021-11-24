@@ -21,13 +21,6 @@ describe Knight do
       expect(@piece.moves).to contain_exactly("e7","f6","f4","e3","c3","b4","b6","c7")
     end
 
-    it "cannot take ghost pawns" do
-      @board.move_piece("g1","d5")
-      @board.move_piece("f7", "f5")
-      #@board.display  #uncomment to show setup
-      expect(@piece.moves).not_to include("f6")
-    end
-
     it "cannot take allies" do
       @board.move_piece("g1","f3")
       #@board.display  #uncomment to show setup

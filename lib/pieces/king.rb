@@ -44,7 +44,7 @@ class King < Piece
 
     out.reject! do |row_index, col_index|
       piece_at_pos = @board.grid[row_index][col_index]
-      piece_at_pos && (piece_at_pos.color == color || piece_at_pos.is_a?(GhostPawn))
+      piece_at_pos && piece_at_pos.color == color
     end
     out
   end

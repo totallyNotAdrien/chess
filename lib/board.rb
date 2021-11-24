@@ -4,7 +4,7 @@ Dir["./lib/pieces/*.rb"].each {|file| require file}
 class Board
   include ChessHelper
 
-  attr_reader :grid, :black_pieces, :white_pieces, :ghost_pawn
+  attr_reader :grid, :black_pieces, :white_pieces, :en_passant
 
   def initialize(moves = [])
     #grid 8x8 array
@@ -13,7 +13,7 @@ class Board
     @grid = Array.new(@rows){Array.new(@cols)}
     @black_pieces = []
     @white_pieces = []
-    @ghost_pawn = nil
+    @en_passant = {}
   end
 
   def set_up_new_board
@@ -68,34 +68,34 @@ class Board
     piece = @grid[row_index][col_index]
 
     return false unless piece
-    return false if piece.is_a?(GhostPawn)
+    return false if @en_passant[piece.position]
     end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
     return false unless piece.valid_move?(end_pos)
 
     #valid move
     new_row_index, new_col_index = end_pos
-    piece_to_capture = @grid[new_row_index][new_col_index]
-    capture_piece(piece_to_capture)
+    piece_to_be_captured = @grid[new_row_index][new_col_index]
+    capture_piece(piece, piece_to_be_captured)
     
     @grid[row_index][col_index] = nil
     @grid[new_row_index][new_col_index] = piece
 
-    reset_ghost_pawn if @ghost_pawn
+    reset_en_passant unless @en_passant.empty?
 
     piece.set_pos(end_pos)  #side effects happen here
     true
   end
 
-  def capture_piece(piece_to_capture)
-    if piece_to_capture && piece_to_capture.is_a?(Piece)
-      if @black_pieces.include?(piece_to_capture)
-        @black_pieces.delete(piece_to_capture)
-      elsif @white_pieces.include?(piece_to_capture)
-        @white_pieces.delete(piece_to_capture)
-      elsif piece_to_capture.is_a?(GhostPawn)
-        capture_piece(@ghost_pawn.parent_piece)
-        reset_ghost_pawn
+  def capture_piece(capturing_piece, piece_to_be_captured)
+    if piece_to_be_captured && piece_to_be_captured.is_a?(Piece)
+      if @black_pieces.include?(piece_to_be_captured)
+        @black_pieces.delete(piece_to_be_captured)
+      elsif @white_pieces.include?(piece_to_be_captured)
+        @white_pieces.delete(piece_to_be_captured)
+      elsif capturing_piece.is_a?(Pawn) && @en_passant[piece_to_be_captured.position]
+        capture_piece(capturing_piece, @en_passant[piece_to_be_captured.position])
+        reset_en_passant
       end
     end
   end
@@ -141,15 +141,9 @@ class Board
     puts col_num_output
   end
 
-  def ghost_pawn=(ghost)
-    return unless ghost
-
-    reset_ghost_pawn if @ghost_pawn
-
-    pos = chess_to_grid_coordinates(ghost.position) || ghost.position
-    row_index, col_index = pos
-    @ghost_pawn = ghost
-    @grid[row_index][col_index] = ghost
+  def set_en_passant(position, piece)
+    reset_en_passant
+    @en_passant[position] = piece
   end
 
   def color_space(contents, color_index)
@@ -214,12 +208,8 @@ class Board
 
   private
 
-  def reset_ghost_pawn
-    return unless @ghost_pawn
-    curr_pawn_pos = chess_to_grid_coordinates(@ghost_pawn.position)
-    row_index, col_index = curr_pawn_pos
-    @grid[row_index][col_index] = nil
-    @ghost_pawn = nil
+  def reset_en_passant
+    @en_passant = {}
   end
 end
 
