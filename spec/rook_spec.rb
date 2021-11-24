@@ -82,23 +82,5 @@ describe Rook do
         expect(@piece.moves).to contain_exactly("h2", "h3", "h4","h5")
       end
     end
-
-    context "when an enemy ghost pawn is in path" do
-      before(:each) do
-        @board = newly_set_up_board
-        @grid = @board.grid
-
-        @piece = @grid[7][7]
-        @board.move_piece("h1","h6")
-        @board.move_piece("e7","e5")
-        allow(@piece).to receive(:valid_move?).and_return(true)
-
-        #@board.display      #uncomment to show setup
-      end
-      
-      it "cannot take the ghost pawn" do
-        expect(@piece.moves).not_to include("e6")
-      end
-    end
   end
 end

@@ -117,12 +117,9 @@ class Board
         space_str = " #{piece_symbol} "
 
         if piece
-          if piece.is_a?(GhostPawn)
-            space_str = piece.color == BLACK ? space_str.gray : space_str.peach 
-          else
-            space_str = piece.color == BLACK ? space_str.black : space_str.white
-          end
+          space_str = piece.color == BLACK ? space_str.black : space_str.white
         end
+        
         grid_space = color_space(space_str, bg_color)
         last_col = col_index == @cols - 1
         row_out += "#{grid_space}#{last_col ? " " : ""}"

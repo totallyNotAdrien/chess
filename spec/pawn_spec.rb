@@ -86,13 +86,13 @@ describe Pawn do
       end
     end
 
-    context "when there is an enemy ghost pawn on a diagonal" do
+    context "when enemy pawn's first move places it next to pawn (2 space move)" do
       before(:each) do
         pawn_e2 = @board.grid[6][4]
         allow(pawn_e2).to receive(:valid_move?).and_return(true)
       end
 
-      it "can take ghost pawn" do
+      it "can perform en passant" do
         @board.move_piece("e2", "e5")
         @board.move_piece("d7", "d5")
         #@board.display  #uncomment to show setup

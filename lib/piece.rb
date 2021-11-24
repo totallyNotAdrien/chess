@@ -78,7 +78,11 @@ class Piece
       break unless new_pos = grid_to_chess_coordinates([new_row_index, new_col_index])
       piece_at_new_pos = @board.grid[new_row_index][new_col_index]
       
-      return if @board.en_passant[new_pos]
+      if @board.en_passant[new_pos]
+        move_arr.push(new_pos)
+        dist += 1
+        next
+      end
 
       if piece_at_new_pos
         if piece_at_new_pos.color == @color
