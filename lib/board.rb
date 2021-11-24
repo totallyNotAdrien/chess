@@ -68,7 +68,6 @@ class Board
     piece = @grid[row_index][col_index]
 
     return false unless piece
-    return false if @en_passant[piece.position]
     end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
     return false unless piece.valid_move?(end_pos)
@@ -76,8 +75,15 @@ class Board
     #valid move
     new_row_index, new_col_index = end_pos
     piece_to_be_captured = @grid[new_row_index][new_col_index]
-    capture_piece(piece, piece_to_be_captured)
-    
+
+    if piece_to_be_captured 
+      capture_piece(piece_to_be_captured)
+    elsif @en_passant[grid_to_chess_coordinates(end_pos)] && piece.is_a?(Pawn)
+      piece_to_be_captured = @en_passant[grid_to_chess_coordinates(end_pos)]
+      capture_piece(piece_to_be_captured)
+      reset_en_passant
+    end
+
     @grid[row_index][col_index] = nil
     @grid[new_row_index][new_col_index] = piece
 
@@ -87,16 +93,14 @@ class Board
     true
   end
 
-  def capture_piece(capturing_piece, piece_to_be_captured)
+  def capture_piece(piece_to_be_captured)
     if piece_to_be_captured && piece_to_be_captured.is_a?(Piece)
       if @black_pieces.include?(piece_to_be_captured)
         @black_pieces.delete(piece_to_be_captured)
       elsif @white_pieces.include?(piece_to_be_captured)
         @white_pieces.delete(piece_to_be_captured)
-      elsif capturing_piece.is_a?(Pawn) && @en_passant[piece_to_be_captured.position]
-        capture_piece(capturing_piece, @en_passant[piece_to_be_captured.position])
-        reset_en_passant
       end
+      self[piece_to_be_captured.position] = nil
     end
   end
 
