@@ -11,7 +11,7 @@ describe Pawn do
     before(:each) do
       @board = newly_set_up_board
       grid = @board.grid
-      @piece = grid[6][4] #e2
+      @piece = @board["e2"]
     end
 
     context "when piece (e2) has not moved" do
@@ -88,15 +88,48 @@ describe Pawn do
 
     context "when enemy pawn's first move places it next to pawn (2 space move)" do
       before(:each) do
-        pawn_e2 = @board.grid[6][4]
-        allow(pawn_e2).to receive(:valid_move?).and_return(true)
+        @board.move_piece("e2", "e4")
+        #@board.display      #uncomment to show step
+        @board.move_piece("e4", "e5")
+        #@board.display      #uncomment to show step
+        @board.move_piece("d7", "d5")
+        #@board.display  #uncomment to show setup
       end
 
       it "can perform en passant" do
-        @board.move_piece("e2", "e5")
-        @board.move_piece("d7", "d5")
-        #@board.display  #uncomment to show setup
         expect(@piece.moves).to include("d6")
+      end
+    end
+
+    context "when enemy pawn's non-first move places it next to pawn (2 spaces forward)" do
+      before(:each) do
+        @board.move_piece("e2", "e4")
+        #@board.display      #uncomment to show step
+        @board.move_piece("d7", "d6")
+        #@board.display      #uncomment to show step
+        @board.move_piece("e4", "e5")
+        #@board.display      #uncomment to show step
+        @board.move_piece("d6", "d5")
+        #@board.display  #uncomment to show setup
+      end
+
+      it "cannot perform en passant" do
+        expect(@piece.moves).not_to include("d6")
+      end
+    end
+
+    context "when pawn moves next to enemy that has previously made a 2-space first move" do
+      before(:each) do
+        @board.move_piece("e2", "e4")
+        #@board.display      #uncomment to show step
+        @board.move_piece("d7", "d5")
+        #@board.display      #uncomment to show step
+        @board.move_piece("e4", "e5")
+        #@board.display  #uncomment to show setup
+      end
+
+      it "cannot perform en passant" do
+        expect(@piece.moves).not_to include("d6")
       end
     end
   end

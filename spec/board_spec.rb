@@ -98,8 +98,6 @@ describe Board do
     context "when start_pos and end_pos are in valid formats" do
       context "if there is no piece at end_pos" do
         before(:each) do
-          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
-          pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
           @start_pos = "g2"
           @end_pos = "g4"
           start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
@@ -139,54 +137,64 @@ describe Board do
         before(:each) do
           @black_pawn = @board["d7"]
           @white_pawn = @board["e2"]
-          @board.move_piece("e2", "e4")
         end
 
         context "if opposing piece has just moved into en passant position" do
           before(:each) do
+            @board.move_piece("e2", "e4")
+            #@board.display      #uncomment to show step
             @board.move_piece("e4", "e5")
+            #@board.display      #uncomment to show step
             @board.move_piece("d7", "d5")
-            @board.display      #uncomment to show setup
-          end
-
-          it "captures just-moved opposing piece" do
-            expect(@board).to receive(:capture_piece).with(@black_pawn)
-            @board.move_piece("e5", "d6")
-            @board.display      #uncomment to show result
-          end
-        end
-
-        context "if opposing piece was already in en passant position" do
-          before(:each) do
-            @board.move_piece("d7", "d5")
-            @board.move_piece("e4", "e5")
-            @board.display      #uncomment to show setup
-          end
-
-          it "cannot perform en passant" do
-            expect(@board.move_piece("e5", "e6")).to be(false)
+            #@board.display      #uncomment to show setup
           end
 
           it "resets @en_passant" do
             allow(@board).to receive(:reset_en_passant)
             expect(@board).to receive(:reset_en_passant)
-            @board.move_piece("e5", "e6")
+            @board.move_piece("e5", "d6")
+            #@board.display      #uncomment to show result
+          end
+
+          it "captures just-moved opposing piece" do
+            expect(@board).to receive(:capture_piece).with(@black_pawn)
+            @board.move_piece("e5", "d6")
+          end
+
+          it "sets opposing piece's space to nil" do
+            expect { @board.move_piece("e5", "d6") }.to change {@board[@black_pawn.position]}.to(nil)
+            #@board.display      #uncomment to show result
+          end
+        end
+
+        context "if opposing piece was already in en passant position" do
+          before(:each) do
+            @board.move_piece("e2", "e4")
+            #@board.display      #uncomment to show step
+            @board.move_piece("d7", "d5")
+            #@board.display      #uncomment to show step
+            @board.move_piece("e4", "e5")
+            #@board.display      #uncomment to show setup
+          end
+
+          it "cannot perform en passant" do
+            expect(@board.move_piece("e5", "d6")).to be(false)
           end
         end
       end
 
       context "if there is an opposing piece at end_pos" do
         before(:each) do
-          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
-          pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
+          # pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+          # pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
           @start_pos = "e4"
           @end_pos = "d5"
           @grid[1][3] = nil
           @grid[6][4] = nil
           white_pawn = Pawn.new(@board, "e4", Board::WHITE)
           black_pawn = Pawn.new(@board, "d5", Board::BLACK)
-          allow(white_pawn).to receive(:valid_move?).and_return(true)
-          allow(black_pawn).to receive(:valid_move?).and_return(true)
+          # allow(white_pawn).to receive(:valid_move?).and_return(true)
+          # allow(black_pawn).to receive(:valid_move?).and_return(true)
           @grid[4][4] = white_pawn
           @grid[3][3] = black_pawn
 
