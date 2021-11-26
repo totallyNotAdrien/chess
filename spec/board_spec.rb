@@ -93,16 +93,15 @@ describe Board do
     before(:each) do
       @board = newly_set_up_board
       @grid = @board.grid
-      pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
-      pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
     end
 
     context "when start_pos and end_pos are in valid formats" do
       context "if there is no piece at end_pos" do
         before(:each) do
+          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+          pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
           @start_pos = "g2"
           @end_pos = "g4"
-          @grid = @board.grid
           start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
           end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
           @row_index_start, @col_index_start = start_pos_grid
@@ -121,22 +120,69 @@ describe Board do
         end
 
         it "does not capture any pieces" do
-          expect(@board).to receive(:capture_piece).with(@piece_to_move, nil)
+          expect(@board).not_to receive(:capture_piece)
           @board.move_piece(@start_pos, @end_pos)
         end
 
         it "returns true" do
           expect(@board.move_piece(@start_pos, @end_pos)).to be(true)
         end
+
+        it "resets @en_passant" do
+          allow(@board).to receive(:reset_en_passant)
+          expect(@board).to receive(:reset_en_passant)
+          @board.move_piece(@start_pos, @end_pos)
+        end
+      end
+
+      context "if moving piece is a pawn" do
+        before(:each) do
+          @black_pawn = @board["d7"]
+          @white_pawn = @board["e2"]
+          @board.move_piece("e2", "e4")
+        end
+
+        context "if opposing piece has just moved into en passant position" do
+          before(:each) do
+            @board.move_piece("e4", "e5")
+            @board.move_piece("d7", "d5")
+            @board.display      #uncomment to show setup
+          end
+
+          it "captures just-moved opposing piece" do
+            expect(@board).to receive(:capture_piece).with(@black_pawn)
+            @board.move_piece("e5", "d6")
+            @board.display      #uncomment to show result
+          end
+        end
+
+        context "if opposing piece was already in en passant position" do
+          before(:each) do
+            @board.move_piece("d7", "d5")
+            @board.move_piece("e4", "e5")
+            @board.display      #uncomment to show setup
+          end
+
+          it "cannot perform en passant" do
+            expect(@board.move_piece("e5", "e6")).to be(false)
+          end
+
+          it "resets @en_passant" do
+            allow(@board).to receive(:reset_en_passant)
+            expect(@board).to receive(:reset_en_passant)
+            @board.move_piece("e5", "e6")
+          end
+        end
       end
 
       context "if there is an opposing piece at end_pos" do
         before(:each) do
+          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+          pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
           @start_pos = "e4"
           @end_pos = "d5"
-          @grid = @board.grid
-          @grid[4][7] = nil
-          @grid[3][1] = nil
+          @grid[1][3] = nil
+          @grid[6][4] = nil
           white_pawn = Pawn.new(@board, "e4", Board::WHITE)
           black_pawn = Pawn.new(@board, "d5", Board::BLACK)
           allow(white_pawn).to receive(:valid_move?).and_return(true)
@@ -149,6 +195,7 @@ describe Board do
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
           @piece_to_move = @grid[@row_index_start][@col_index_start]
+          #@board.display      #uncomment to show setup
         end
 
         it "sets grid space at piece's old position to nil" do
@@ -158,7 +205,7 @@ describe Board do
 
         it "captures piece at end_pos" do
           piece_to_capture = @grid[@row_index_end][@col_index_end]
-          expect(@board).to receive(:capture_piece).with(@piece_to_move, piece_to_capture)
+          expect(@board).to receive(:capture_piece).with(piece_to_capture)
           @board.move_piece(@start_pos, @end_pos)
         end
 
