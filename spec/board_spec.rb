@@ -92,7 +92,6 @@ describe Board do
 
     before(:each) do
       @board = newly_set_up_board
-      @grid = @board.grid
     end
 
     context "when start_pos and end_pos are in valid formats" do
@@ -104,17 +103,17 @@ describe Board do
           end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
-          @piece_to_move = @grid[@row_index_start][@col_index_start]
+          @piece_to_move = @board[@start_pos]
         end
 
         it "sets grid space at piece's old position to nil" do
           expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
-          expect_stuff.to change { @grid[@row_index_start][@col_index_start] }.to(nil)
+          expect_stuff.to change { @board[@start_pos] }.to(nil)
         end
 
         it "sets grid space at end position to piece" do
           expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
-          expect_stuff.to change { @grid[@row_index_end][@col_index_end] }.to(@piece_to_move)
+          expect_stuff.to change { @board[@end_pos] }.to(@piece_to_move)
         end
 
         it "does not capture any pieces" do
@@ -185,41 +184,39 @@ describe Board do
 
       context "if there is an opposing piece at end_pos" do
         before(:each) do
-          # pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
-          # pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(true)}
           @start_pos = "e4"
           @end_pos = "d5"
-          @grid[1][3] = nil
-          @grid[6][4] = nil
-          white_pawn = Pawn.new(@board, "e4", Board::WHITE)
-          black_pawn = Pawn.new(@board, "d5", Board::BLACK)
+          @board["d7"] = nil
+          @board["e2"] = nil
+          white_pawn = Pawn.new(@board, @start_pos, Board::WHITE)
+          black_pawn = Pawn.new(@board, @end_pos, Board::BLACK)
           # allow(white_pawn).to receive(:valid_move?).and_return(true)
           # allow(black_pawn).to receive(:valid_move?).and_return(true)
-          @grid[4][4] = white_pawn
-          @grid[3][3] = black_pawn
+          @board[@start_pos] = white_pawn
+          @board[@end_pos] = black_pawn
 
           start_pos_grid = @board.chess_to_grid_coordinates(@start_pos)
           end_pos_grid = @board.chess_to_grid_coordinates(@end_pos)
           @row_index_start, @col_index_start = start_pos_grid
           @row_index_end, @col_index_end = end_pos_grid
-          @piece_to_move = @grid[@row_index_start][@col_index_start]
+          @piece_to_move = @board[@start_pos]
           #@board.display      #uncomment to show setup
         end
 
         it "sets grid space at piece's old position to nil" do
           expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
-          expect_stuff.to change { @grid[@row_index_start][@col_index_start] }.to(nil)
+          expect_stuff.to change { @board[@start_pos] }.to(nil)
         end
 
         it "captures piece at end_pos" do
-          piece_to_capture = @grid[@row_index_end][@col_index_end]
+          piece_to_capture = @board[@end_pos]
           expect(@board).to receive(:capture_piece).with(piece_to_capture)
           @board.move_piece(@start_pos, @end_pos)
         end
 
         it "sets grid space at end position to piece" do
           expect_stuff = expect { @board.move_piece(@start_pos, @end_pos) }
-          expect_stuff.to change { @grid[@row_index_end][@col_index_end] }.to(@piece_to_move)
+          expect_stuff.to change { @board[@end_pos] }.to(@piece_to_move)
         end
 
         it "returns true" do
@@ -243,8 +240,7 @@ describe Board do
 
       context "if move is not valid" do
         before(:each) do
-          @grid = @board.grid
-          pieces = @grid[0] + @grid[1] + @grid[6] + @grid[7]
+          pieces = @board[0] + @board[1] + @board[6] + @board[7]
           pieces.each {|piece| allow(piece).to receive(:valid_move?).and_return(false)}
         end
         it "returns false" do
@@ -286,7 +282,6 @@ describe Board do
 
     before(:each) do
       @board = newly_set_up_board
-      @grid = @board.grid
     end
     
     context "when pos(e3) is empty space in the attack path of only white pieces" do
@@ -318,7 +313,7 @@ describe Board do
     
     context "when pos(f2) refers to white piece in the attack path of white and black pieces" do
       before(:each) do
-        b_queen = @grid[0][3]
+        b_queen = @board["d8"]
         allow(b_queen).to receive(:valid_move?).and_return(true)
         @board.move_piece("d8", "f3")
         #@board.display      #uncomment to show setup
@@ -335,7 +330,7 @@ describe Board do
     
     context "when pos(f7) refers to black piece in the attack path of white and black pieces" do
       before(:each) do
-        w_queen = @grid[7][3]
+        w_queen = @board["d1"]
         allow(w_queen).to receive(:valid_move?).and_return(true)
         @board.move_piece("d1", "f6")
         #@board.display      #uncomment to show setup
