@@ -62,30 +62,29 @@ class Board
     both_in_valid_format = (in_chess_coords?(start_pos) || in_grid_coords?(start_pos)) &&
       (in_chess_coords?(end_pos) || in_grid_coords?(end_pos))
     return false unless both_in_valid_format
-    
-    start_pos = chess_to_grid_coordinates(start_pos) if in_chess_coords?(start_pos)
-    row_index, col_index = start_pos
-    piece = @grid[row_index][col_index]
+
+    start_pos = grid_to_chess_coordinates(start_pos) || start_pos
+    end_pos = grid_to_chess_coordinates(end_pos) || end_pos
+
+    piece = self[start_pos]
 
     return false unless piece
-    end_pos = chess_to_grid_coordinates(end_pos) || end_pos
 
     return false unless piece.valid_move?(end_pos)
 
     #valid move
-    new_row_index, new_col_index = end_pos
-    piece_to_be_captured = @grid[new_row_index][new_col_index]
+    piece_to_be_captured = self[end_pos]
 
     if piece_to_be_captured 
       capture_piece(piece_to_be_captured)
-    elsif @en_passant[grid_to_chess_coordinates(end_pos)] && piece.is_a?(Pawn)
-      piece_to_be_captured = @en_passant[grid_to_chess_coordinates(end_pos)]
+    elsif @en_passant[end_pos] && piece.is_a?(Pawn)
+      piece_to_be_captured = @en_passant[end_pos]
       capture_piece(piece_to_be_captured)
       reset_en_passant
     end
 
-    @grid[row_index][col_index] = nil
-    @grid[new_row_index][new_col_index] = piece
+    self[start_pos] = nil
+    self[end_pos] = piece
 
     reset_en_passant unless @en_passant.empty?
 
