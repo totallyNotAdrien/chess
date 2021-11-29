@@ -72,7 +72,12 @@ class Board
 
     return false unless piece.valid_move?(end_pos)
 
-    #valid move
+    #pseudo-valid move
+    if in_check_after_move?(start_pos, end_pos)
+      #king_in_check_msg
+      return false
+    end
+
     piece_to_be_captured = self[end_pos]
 
     if piece_to_be_captured 
@@ -210,6 +215,25 @@ class Board
 
   def reset_en_passant
     @en_passant = {}
+  end
+
+  #assumes that start_pos and end_pos have been validated
+  def in_check_after_move?(start_pos, end_pos)
+    raise ArgumentError.new("No Piece at start_pos") unless self[start_pos]
+    
+    piece_to_move = self[start_pos]
+    other_piece = self[end_pos]
+    force_move(start_pos, end_pos)
+    check = in_check?(piece_to_move.color)
+    force_move(end_pos, start_pos)
+    self[end_pos] = other_piece
+    check
+  end
+
+  #assumes that start_pos and end_pos have been validated
+  def force_move(start_pos, end_pos)
+    self[end_pos] = self[start_pos]
+    self[start_pos] = nil
   end
 end
 
