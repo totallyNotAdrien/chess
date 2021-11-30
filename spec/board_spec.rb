@@ -247,6 +247,41 @@ describe Board do
           expect(@board.move_piece("a2", "g7")).to be(false)
         end
       end
+
+      context "if move places current color in check" do
+        def board_with_moves(moves_str, show_each_step)
+          board = newly_set_up_board
+          moves = moves_str.split(" ")
+          moves.each do |move_str|
+            start_pos, end_pos = move_str.insert(2,":").split(":")
+            board.move_piece(start_pos, end_pos)
+            board.display if show_each_step
+          end
+          board
+        end
+
+        before(:each) do
+          allow(@board).to receive(:king_in_check_msg)
+        end
+
+        context "when the king is not already in check" do
+          it "returns false" do
+            #true/false = show/not show each step
+            @board = board_with_moves("e2e4 d7d5 e4d5 d8d5 f1e2 d5e4", false)
+            #@board.display      #uncomment to show setup
+            expect(@board.move_piece("e2","b5")).to be(false)
+          end
+        end
+
+        context "when the king is already in check" do
+          it "returns false" do
+            #true/false = show/not show each step
+            @board = board_with_moves("g8h6 h6f5 f5h4 h4f3", false)
+            #@board.display      #uncomment to show setup
+            expect(@board.move_piece("e2","e3")).to be(false)
+          end
+        end
+      end
     end
 
     context "when either start_pos or end_pos are in an invalid format" do

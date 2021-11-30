@@ -71,12 +71,13 @@ class Board
     return false unless piece
 
     return false unless piece.valid_move?(end_pos)
+    #move is pseudo-legal at this point
 
-    #pseudo-valid move
     if in_check_after_move?(start_pos, end_pos)
-      #king_in_check_msg
+      king_in_check_msg
       return false
     end
+    #move is legal at this point
 
     piece_to_be_captured = self[end_pos]
 
@@ -106,44 +107,6 @@ class Board
       end
       self[piece_to_be_captured.position] = nil
     end
-  end
-
-  def display
-    puts
-
-    output = ""
-    #build output row by row
-    for row_index in 0...@rows
-      row_number = @rows-row_index
-      row_out = " #{row_number}" + (" " * 1)
-
-      bg_color = row_index % 2
-
-      for col_index in 0...@cols
-        piece = @grid[row_index][col_index]
-        piece_symbol = piece ? piece.piece_symbol : " "
-        space_str = " #{piece_symbol} "
-
-        if piece
-          space_str = piece.color == BLACK ? space_str.black : space_str.white
-        end
-        
-        grid_space = color_space(space_str, bg_color)
-        last_col = col_index == @cols - 1
-        row_out += "#{grid_space}#{last_col ? " " : ""}"
-        bg_color = (bg_color + 1) % 2
-      end
-      output += "#{row_out}\n"
-    end
-
-    puts output
-
-    #column indicators
-    col_num_output = " " * 4
-    for letter in "a".."h"
-      col_num_output += "#{letter}" + (" " * 2)
-    end
-    puts col_num_output
   end
 
   def set_en_passant(position, piece)
@@ -211,6 +174,44 @@ class Board
     nil
   end
 
+  def display
+    puts
+
+    output = ""
+    #build output row by row
+    for row_index in 0...@rows
+      row_number = @rows-row_index
+      row_out = " #{row_number}" + (" " * 1)
+
+      bg_color = row_index % 2
+
+      for col_index in 0...@cols
+        piece = @grid[row_index][col_index]
+        piece_symbol = piece ? piece.piece_symbol : " "
+        space_str = " #{piece_symbol} "
+
+        if piece
+          space_str = piece.color == BLACK ? space_str.black : space_str.white
+        end
+        
+        grid_space = color_space(space_str, bg_color)
+        last_col = col_index == @cols - 1
+        row_out += "#{grid_space}#{last_col ? " " : ""}"
+        bg_color = (bg_color + 1) % 2
+      end
+      output += "#{row_out}\n"
+    end
+
+    puts output
+
+    #column indicators
+    col_num_output = " " * 4
+    for letter in "a".."h"
+      col_num_output += "#{letter}" + (" " * 2)
+    end
+    puts col_num_output
+  end
+
   private
 
   def reset_en_passant
@@ -234,6 +235,10 @@ class Board
   def force_move(start_pos, end_pos)
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
+  end
+
+  def king_in_check_msg
+    puts "You cannot place your King in check"
   end
 end
 
