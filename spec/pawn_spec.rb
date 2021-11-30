@@ -8,6 +8,17 @@ describe Pawn do
       board
     end
 
+    def board_with_moves(moves_str, show_each_step)
+      board = newly_set_up_board
+      moves = moves_str.split(" ")
+      moves.each do |move_str|
+        start_pos, end_pos = move_str.insert(2,":").split(":")
+        board.move_piece(start_pos, end_pos)
+        board.display if show_each_step
+      end
+      board
+    end
+
     before(:each) do
       @board = newly_set_up_board
       grid = @board.grid
@@ -29,9 +40,10 @@ describe Pawn do
 
       context "if there is a piece two spaces in front of it" do
         it "can only move one space forward" do
-          @board.move_piece("d8", "e4")
+          @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", true)
+          @piece = @board["h2"]
           #@board.display  #uncomment to show setup
-          expect(@piece.moves).to contain_exactly("e3")
+          expect(@piece.moves).to contain_exactly("h3")
         end
       end
 

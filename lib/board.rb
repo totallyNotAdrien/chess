@@ -151,6 +151,22 @@ class Board
     under_attack_from_color?((color + 1) % 2, position)
   end
 
+  def in_checkmate?(color)
+    return false unless in_check?(color)
+
+    pieces = color == WHITE ? @white_pieces : @black_pieces
+    pieces.all? do |piece| 
+      moves = piece.moves
+      if moves.empty?
+        true
+      else
+        moves.all? do |end_pos| 
+          in_check_after_move?(piece.position, end_pos)
+        end
+      end
+    end
+  end
+
   def [](index)
     if index.is_a?(Integer)
       return @grid[index]

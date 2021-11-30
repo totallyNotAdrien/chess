@@ -380,4 +380,30 @@ describe Board do
       end
     end
   end
+
+  describe "#checkmate?" do
+    let(:newly_set_up_board) do
+      board = Board.new
+      board.set_up_new_board
+      board
+    end
+
+    def board_with_moves(moves_str, show_each_step)
+      board = newly_set_up_board
+      moves = moves_str.split(" ")
+      moves.each do |move_str|
+        start_pos, end_pos = move_str.insert(2,":").split(":")
+        board.move_piece(start_pos, end_pos)
+        board.display if show_each_step
+      end
+      board
+    end
+
+    context "when white has been checkmated" do
+      it "returns true (Fool's mate)" do
+        @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", true)
+        expect(@board).to be_in_checkmate(ChessHelper::WHITE)
+      end
+    end
+  end
 end

@@ -8,6 +8,17 @@ describe King do
       board
     end
 
+    def board_with_moves(moves_str, show_each_step)
+      board = newly_set_up_board
+      moves = moves_str.split(" ")
+      moves.each do |move_str|
+        start_pos, end_pos = move_str.insert(2,":").split(":")
+        board.move_piece(start_pos, end_pos)
+        board.display if show_each_step
+      end
+      board
+    end
+
     before(:each) do
       @board = newly_set_up_board
       @grid = @board.grid
@@ -260,21 +271,14 @@ describe King do
         end
 
         it "cannot castle (kingside)" do
-          @board.move_piece("d8", "h4")
-          @board.move_piece("f2", "f3")
-          @board.move_piece("f1", "f4")
-          @board.move_piece("g1", "g4")
+          @board = board_with_moves("f2f3 f1f4 g1g4 d8h4", false)
           #@board.display      #uncomment to show setup
 
           expect(@piece.moves).not_to include("g1")
         end
 
         it "cannot castle (queenside)" do
-          @board.move_piece("d8", "a5")
-          @board.move_piece("d2", "d3")
-          @board.move_piece("d1", "d4")
-          @board.move_piece("c1", "c4")
-          @board.move_piece("b1", "b3")
+          @board = board_with_moves("d2d3 d1d4 c1c4 b1b3 d8a5", false)
           #@board.display      #uncomment to show setup
 
           expect(@piece.moves).not_to include("c1")
