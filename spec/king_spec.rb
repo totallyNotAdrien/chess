@@ -27,6 +27,7 @@ describe King do
     end
 
     it "can take enemy pieces 1 space away" do
+      allow(@board).to receive(:in_check_after_move?).and_return(false)
       @board.move_piece("e1", "e6")
       #@board.display      #uncomment to show setup
       expect(@piece.moves).to include("d7", "e7", "f7")

@@ -401,7 +401,8 @@ describe Board do
 
     context "when white has been checkmated" do
       it "returns true (Fool's mate)" do
-        @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", true)
+        @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", false)
+        #@board.display
         expect(@board).to be_in_checkmate(ChessHelper::WHITE)
       end
     end

@@ -24,7 +24,6 @@ class Board
     col_index = 0
     for piece_class in first_rank_classes
       piece = piece_class.new(self, [row_index, col_index], BLACK)
-      @black_king = piece if piece.is_a?(King)
       @grid[row_index][col_index] = piece
       @black_pieces.push(piece)
       col_index += 1
@@ -43,7 +42,6 @@ class Board
     col_index = 0
     for piece_class in first_rank_classes
       piece = piece_class.new(self, [row_index, col_index], WHITE)
-      @white_king = piece if piece.is_a?(King)
       @grid[row_index][col_index] = piece
       @white_pieces.push(piece)
       col_index += 1
@@ -147,7 +145,7 @@ class Board
   end
 
   def in_check?(color)
-    position = (color == WHITE) ? @white_king.position : @black_king.position
+    position = (color == WHITE) ? white_king_pos : black_king_pos
     under_attack_from_color?((color + 1) % 2, position)
   end
 
@@ -228,12 +226,6 @@ class Board
     puts col_num_output
   end
 
-  private
-
-  def reset_en_passant
-    @en_passant = {}
-  end
-
   #assumes that start_pos and end_pos have been validated
   def in_check_after_move?(start_pos, end_pos)
     raise ArgumentError.new("No Piece at start_pos") unless self[start_pos]
@@ -247,6 +239,12 @@ class Board
     check
   end
 
+  private
+
+  def reset_en_passant
+    @en_passant = {}
+  end
+
   #assumes that start_pos and end_pos have been validated
   def force_move(start_pos, end_pos)
     self[end_pos] = self[start_pos]
@@ -255,6 +253,24 @@ class Board
 
   def king_in_check_msg
     puts "You cannot place your King in check"
+  end
+
+  def white_king_pos
+    for row in 0...@rows
+      for col in 0...@cols
+        piece = grid[row][col]
+        return grid_to_chess_coordinates([row, col]) if piece.is_a?(King) && piece.color == WHITE
+      end
+    end
+  end
+
+  def black_king_pos
+    for row in 0...@rows
+      for col in 0...@cols
+        piece = grid[row][col]
+        return grid_to_chess_coordinates([row, col]) if piece.is_a?(King) && piece.color == BLACK
+      end
+    end
   end
 end
 
