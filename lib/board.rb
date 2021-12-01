@@ -6,6 +6,19 @@ class Board
 
   attr_reader :grid, :black_pieces, :white_pieces, :en_passant
 
+  def self.board_with_moves(moves_str)
+    board = Board.new
+    board.set_up_new_board
+    moves = moves_str.split(" ")
+    if !moves.empty? && moves.all?{|move| board.valid_move_format?(move)}
+      moves.each do |move_str|
+        start_pos, end_pos = move_str.insert(2,":").split(":")
+        board.move_piece(start_pos, end_pos)
+      end
+    end
+    board
+  end
+
   def initialize(moves = [])
     #grid 8x8 array
     @rows = 8

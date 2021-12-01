@@ -40,6 +40,13 @@ module ChessHelper
     matches_pattern = /[a-h][1-8]/.match(pos) != nil
     return pos.length == 2 && matches_pattern
   end
+
+  def valid_move_format?(move)
+    return false unless move.is_a?(String) && move.length == 4
+
+    start_pos, end_pos = move.insert(2, ":").split(":")
+    in_chess_coords?(start_pos) && in_chess_coords?(end_pos)
+  end
 end
 
 class String

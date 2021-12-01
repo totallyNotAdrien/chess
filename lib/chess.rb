@@ -4,7 +4,20 @@ require_relative "piece.rb"
 class Chess
   include ChessHelper
 
-  def initialize(moves = [])
+  def initialize(moves = nil)
+    @board = nil
+    if moves.is_a?(String)
+      move_arr = moves.split(" ")
+      if move_arr.empty? 
+        puts "Aborting load: no moves to load"
+      elsif !move_arr.all?{|move| valid_move_format?(move)}
+        puts "Aborting load: invalid formatting"
+      else
+        @board = Board.board_with_moves(moves)
+      end
+    else
+
+    end
     @board = Board.new
     @players = {WHITE=>[], BLACK=>[]}
     @board.set_up_new_board
