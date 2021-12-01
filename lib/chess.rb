@@ -6,7 +6,8 @@ class Chess
 
   def initialize(moves = nil)
     @board = nil
-    if moves.is_a?(String)
+    @player_index = nil
+    if moves && moves.is_a?(String)
       move_arr = moves.split(" ")
       if move_arr.empty? 
         puts "Aborting load: no moves to load"
@@ -14,15 +15,13 @@ class Chess
         puts "Aborting load: invalid formatting"
       else
         @board = Board.board_with_moves(moves)
+        @player_index = move_arr.length % 2
       end
     else
-
+      @board = Board.new
+      @board.set_up_new_board
+      @player_index = 0
     end
-    @board = Board.new
-    @players = {WHITE=>[], BLACK=>[]}
-    @board.set_up_new_board
-    #@player_index
-    #do stuff with moves
   end
 
   def play
