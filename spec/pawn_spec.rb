@@ -25,8 +25,8 @@ describe Pawn do
       @piece = @board["e2"]
     end
 
-    context "when piece (e2) has not moved" do
-      context "if there are no pieces blocking its path" do
+    context "when piece has not moved" do
+      context "if there are no pieces blocking its (e2) path" do
         it "can only move one or two spaces forward" do
           #@board.display  #uncomment to show setup
           expect(@piece.moves).to contain_exactly("e3", "e4")
@@ -40,7 +40,7 @@ describe Pawn do
 
       context "if there is a piece two spaces in front of it" do
         it "can only move one space forward" do
-          @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", true)
+          @board = board_with_moves("e7e6 g2g4 d8h4", false)
           @piece = @board["h2"]
           #@board.display  #uncomment to show setup
           expect(@piece.moves).to contain_exactly("h3")

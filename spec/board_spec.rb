@@ -381,7 +381,7 @@ describe Board do
     end
   end
 
-  describe "#checkmate?" do
+  describe "#in_checkmate?" do
     let(:newly_set_up_board) do
       board = Board.new
       board.set_up_new_board
@@ -404,6 +404,14 @@ describe Board do
         @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", false)
         #@board.display
         expect(@board).to be_in_checkmate(ChessHelper::WHITE)
+      end
+    end
+
+    context "when only in check" do
+      it "returns false" do
+        @board = board_with_moves("f2f3 e7e6 a2a4 d8h4", true)
+        #@board.display
+        expect(@board).not_to be_in_checkmate(ChessHelper::WHITE)
       end
     end
   end
