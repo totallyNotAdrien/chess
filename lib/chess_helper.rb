@@ -44,8 +44,13 @@ module ChessHelper
   def valid_move_format?(move)
     return false unless move.is_a?(String) && move.length == 4
 
-    start_pos, end_pos = move.insert(2, ":").split(":")
+    start_pos, end_pos = formatted_move_string_to_array(move)
     in_chess_coords?(start_pos) && in_chess_coords?(end_pos)
+  end
+
+  def formatted_move_string_to_array(move)
+    move = move.clone
+    return move.insert(2, ":").split(":")
   end
 end
 

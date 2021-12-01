@@ -12,7 +12,7 @@ class Board
     moves = moves_str.split(" ")
     if !moves.empty? && moves.all?{|move| board.valid_move_format?(move)}
       moves.each do |move_str|
-        start_pos, end_pos = move_str.insert(2,":").split(":")
+        start_pos, end_pos = board.formatted_move_string_to_array(move_str)
         board.move_piece(start_pos, end_pos)
       end
     end
@@ -239,20 +239,38 @@ class Board
     puts col_num_output
   end
 
+  private
+
   #assumes that start_pos and end_pos have been validated
   def in_check_after_move?(start_pos, end_pos)
     raise ArgumentError.new("No Piece at start_pos") unless self[start_pos]
     
     piece_to_move = self[start_pos]
     other_piece = self[end_pos]
+
+    if other_piece
+      if other_piece.color == BLACK
+        @black_pieces.delete(other_piece)
+      else
+        @white_pieces.delete(other_piece)
+      end
+    end
+
     force_move(start_pos, end_pos)
     check = in_check?(piece_to_move.color)
     force_move(end_pos, start_pos)
+
+    if other_piece
+      if other_piece.color == BLACK
+        @black_pieces.push(other_piece)
+      else
+        @white_pieces.push(other_piece)
+      end
+    end
+
     self[end_pos] = other_piece
     check
   end
-
-  private
 
   def reset_en_passant
     @en_passant = {}

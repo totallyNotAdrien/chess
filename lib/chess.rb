@@ -1,5 +1,6 @@
 require_relative "board.rb"
 require_relative "piece.rb"
+require "pry-byebug"
 
 class Chess
   include ChessHelper
@@ -27,25 +28,38 @@ class Chess
   def play
     until checkmate? 
       display_board
-      display_turn
       player_turn
     end
     winner_msg
   end
 
   def player_turn
-    #get input
-    #handle input
+    loop do
+      display_turn
+      input = player_input
+      break if handle_input(input)
+    end
+    switch_player
   end
 
   def handle_input(input)
-    #input valid and valid move
-      #move piece
-      #switch player
+    if valid_move_format?(input)
+      start_pos, end_pos = formatted_move_string_to_array(input)
+      if @board[start_pos] == nil
+        puts "There is no piece there"
+        return false
+      elsif @board[start_pos].color != @player_index
+        puts "That's not your piece"
+        return false
+      else
+        return @board.move_piece(start_pos, end_pos)
+      end
+    end
   end
 
   def player_input
-    #get input
+    print "Enter your move: "
+    gets.chomp.strip.remove_spaces
   end
 
   def checkmate?(player = @player_index) #player = player_color ?
