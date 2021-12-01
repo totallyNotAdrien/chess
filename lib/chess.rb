@@ -54,16 +54,17 @@ class Chess
   end
 
   def display_board
-    #@board.display
+    @board.display
   end
 
   def display_turn
-    #display curr player
-    #if in check, say so
+    player_name = @player_index == WHITE ? "WHITE" : "BLACK"
+    puts "#{player_name}'s Turn"
+    puts "Your King is in check" if @board.in_check?(@player_index)
   end
 
   def switch_player
-    #@player_index = (@player_index + 1) % 2
+    @player_index = (@player_index + 1) % 2
   end
 
   private
