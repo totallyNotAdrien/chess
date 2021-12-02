@@ -10,9 +10,9 @@ class Chess
     @player_index = nil
     if moves && moves.is_a?(String)
       move_arr = moves.split(" ")
-      if move_arr.empty? 
+      if move_arr.empty?
         puts "Aborting load: no moves to load"
-      elsif !move_arr.all?{|move| valid_move_format?(move)}
+      elsif !move_arr.all? { |move| valid_move_format?(move) }
         puts "Aborting load: invalid formatting"
       else
         @board = Board.board_with_moves(moves)
@@ -26,10 +26,11 @@ class Chess
   end
 
   def play
-    until checkmate? 
+    until checkmate?
       display_board
       player_turn
     end
+    display_board
     winner_msg
   end
 
@@ -62,9 +63,8 @@ class Chess
     gets.chomp.strip.remove_spaces
   end
 
-  def checkmate?(player = @player_index) #player = player_color ?
-    #check board for checkmate
-    #checkmate = player in check and no valid moves
+  def checkmate?(player = @player_index)
+    @board.in_checkmate?(player)
   end
 
   def display_board
@@ -73,6 +73,7 @@ class Chess
 
   def display_turn
     player_name = @player_index == WHITE ? "WHITE" : "BLACK"
+    puts
     puts "#{player_name}'s Turn"
     puts "Your King is in check" if @board.in_check?(@player_index)
   end
@@ -83,4 +84,15 @@ class Chess
 
   private
 
+  def winner_msg
+    name = if checkmate?(WHITE)
+        "Black"
+      elsif checkmate?(BLACK)
+        "White"
+      else
+        "No one"
+      end
+    puts
+    puts "#{name} Wins!"
+  end
 end
