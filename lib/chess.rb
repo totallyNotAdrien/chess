@@ -1,22 +1,25 @@
 require_relative "board.rb"
 require_relative "piece.rb"
+require "yaml"
 require "pry-byebug"
 
 class Chess
   include ChessHelper
 
-  def initialize(moves = nil)
+  def initialize(moves_to_load = nil)
     @board = nil
     @player_index = nil
-    if moves && moves.is_a?(String)
-      move_arr = moves.split(" ")
+    @moves = []
+    if moves_to_load && moves_to_load.is_a?(String)
+      move_arr = moves_to_load.split(" ")
       if move_arr.empty?
         puts "Aborting load: no moves to load"
       elsif !move_arr.all? { |move| valid_move_format?(move) }
         puts "Aborting load: invalid formatting"
       else
-        @board = Board.board_with_moves(moves)
+        @board = Board.board_with_moves(moves_to_load)
         @player_index = move_arr.length % 2
+        @moves = move_arr
       end
     else
       @board = Board.new
@@ -53,8 +56,12 @@ class Chess
         puts "That's not your piece"
         return false
       else
-        return @board.move_piece(start_pos, end_pos)
+        move_success = @board.move_piece(start_pos, end_pos)
+        @moves.push(start_pos + end_pos) if move_success
+        return move_success
       end
+    elsif input.downcase == "save"
+      save
     end
   end
 
@@ -82,7 +89,41 @@ class Chess
     @player_index = (@player_index + 1) % 2
   end
 
+  def moves
+    @moves.join(" ")
+  end
+
+  def save
+    path = save_path
+    File.open(path, "w") do |file|
+      YAML.dump(moves, file)
+    end
+  end
+
+  def save_path
+    print "Enter a name to save this game as: "
+    binding.pry
+    dupe_index = 1
+    input = gets.chomp.strip
+    if input.empty?
+      save_name = "0"
+    else
+      save_name = input
+    end
+
+    while File.exist?(save_name_to_path(save_name))
+      save_name = "#{input}#{dupe_index}"
+      dupe_index += 1
+    end
+
+    save_name_to_path(save_name)
+  end
+
   private
+
+  def save_name_to_path(save_name)
+    "saves/#{save_name}.yaml"
+  end
 
   def winner_msg
     name = if checkmate?(WHITE)
