@@ -31,7 +31,7 @@ def load_game
     path = paths[input.to_i - 1]
     if File.exist?(path)
       moves_str = YAML.load_file(path)
-      p moves_str
+      return moves_str
     else
       puts "Could not find '#{path}'"
     end

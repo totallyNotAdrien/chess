@@ -31,7 +31,6 @@ class Chess
 
   def play
     until checkmate? || @end_game
-      display_board
       player_turn
     end
 
@@ -43,6 +42,7 @@ class Chess
 
   def player_turn
     loop do
+      display_board
       display_turn
       input = player_input
       break if handle_input(input)
@@ -53,11 +53,18 @@ class Chess
   def handle_input(input)
     if valid_move_format?(input)
       start_pos, end_pos = formatted_move_string_to_array(input)
-      if @board[start_pos] == nil
-        puts "There is no piece there"
+      piece = @board[start_pos]
+      if piece == nil
+        puts
+        puts "There is no piece there (#{start_pos})".yellow
         return false
-      elsif @board[start_pos].color != @player_index
-        puts "That's not your piece"
+      elsif piece.color != @player_index
+        puts
+        puts "That's not your piece (#{piece.class} #{start_pos})".red
+        return false
+      elsif !piece.valid_move?(end_pos)
+        puts
+        puts "#{piece.class} #{start_pos} cannot move there (#{end_pos})".red
         return false
       else
         move_success = @board.move_piece(start_pos, end_pos)
@@ -68,14 +75,14 @@ class Chess
       save
       @end_game = true
       true
-    elsif input.downcase == "quit"
+    elsif input.downcase == "quit" || input.downcase == "exit"
       @end_game = true
       true
     end
   end
 
   def player_input
-    puts "Enter 'save' to save and quit, 'quit' to quit without saving, or"
+    puts "Enter 'save' to save and quit, 'quit' / 'exit' to quit without saving, or"
     print "Enter your move: "
     gets.chomp.strip.remove_spaces
   end
