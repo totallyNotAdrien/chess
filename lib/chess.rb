@@ -7,6 +7,7 @@ class Chess
   include ChessHelper
 
   def initialize(moves_to_load = nil)
+    @end_game = false
     @board = nil
     @player_index = nil
     @moves = []
@@ -29,12 +30,15 @@ class Chess
   end
 
   def play
-    until checkmate?
+    until checkmate? || @end_game
       display_board
       player_turn
     end
-    display_board
-    winner_msg
+
+    unless @end_game
+      display_board
+      winner_msg
+    end
   end
 
   def player_turn
@@ -62,10 +66,16 @@ class Chess
       end
     elsif input.downcase == "save"
       save
+      @end_game = false
+      true
+    elsif input.downcase == "quit"
+      @end_game = false
+      true
     end
   end
 
   def player_input
+    puts "Enter 'save' to save and quit, 'quit' to quit without saving, or"
     print "Enter your move: "
     gets.chomp.strip.remove_spaces
   end
@@ -102,7 +112,7 @@ class Chess
 
   def save_path
     print "Enter a name to save this game as: "
-    binding.pry
+    #binding.pry
     dupe_index = 1
     input = gets.chomp.strip
     if input.empty?

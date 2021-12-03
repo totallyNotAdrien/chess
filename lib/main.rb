@@ -1,11 +1,5 @@
 require_relative "chess.rb"
 
-# @board = Board.new
-# @board.set_up_new_board
-# @board.display
-# @knight = @board.grid[7][6]
-# @king = @board.grid[7][4]
-
 def d
   @board.display
 end
@@ -16,13 +10,58 @@ def m(start_pos, end_pos)
   moved
 end
 
-#@board = board_with_moves("f2f3 e7e6 g2g4 d8h4", true)
-# @board = Board.board_with_moves("e2e4 d7d5 e4d5 d8d5 f1e2 d5e4", true)
-# @wking = @board["e1"]
+def load_game
+  paths = Dir.glob("saves/*.yaml").sort
+  if paths.length > 0
+    file_number = 1
+    paths.each do |path|
+      if File.exist?(path)
+        puts "[#{file_number}] #{path_to_save_name(path)}"
+      end
+      puts "\n\n"
+      file_number += 1
+    end
+    print "Select the number [x] of the file you want to load (ex: '1'): "
+    input = gets.chomp.strip
+    until load_file_number_valid?(input, paths)
+      print "Selection must be a number listed: "
+      input = gets.chomp.strip
+    end
 
-# m("a2", "a4")
-# m("a4", "a5")
-# m("a5", "a6")
+    path = paths[input.to_i - 1]
+    if File.exist?(path)
+      moves_str = YAML.load_file(path)
+      p moves_str
+    else
+      puts "Could not find '#{path}'"
+    end
+  else
+    puts "No games to load\n\n"
+  end
+end
 
-@game = Chess.new
-@game.play
+def load_file_number_valid?(input, paths)
+  input && input.length != 0 && input.to_i > 0 && input.to_i < paths.length + 1
+end
+
+def path_to_save_name(path)
+  path.gsub("saves/", "").gsub(".yaml", "")
+end
+
+puts "Welcome to Chess."
+puts "Would you like to start a new game, or continue an old one?"
+puts "\t[1]   New Game"
+puts "\t[2]   Load Game"
+puts "\t[ANY] Quit"
+puts
+print "Selection: "
+input = gets.chomp.strip
+
+case input
+when '1'
+  Chess.new.play
+when '2'
+  Chess.new(load_game).play
+else
+  puts "Goodbye"
+end
