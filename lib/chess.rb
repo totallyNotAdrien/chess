@@ -68,7 +68,10 @@ class Chess
         return false
       else
         move_success = @board.move_piece(start_pos, end_pos)
-        @moves.push(start_pos + end_pos) if move_success
+        if move_success
+          @moves.push(start_pos + end_pos)
+          check_pawn_promotion(piece)
+        end
         return move_success
       end
     elsif input.downcase == "save"
@@ -78,6 +81,9 @@ class Chess
     elsif input.downcase == "quit" || input.downcase == "exit"
       @end_game = true
       true
+    else
+      puts
+      puts "Invalid move format '#{input}'".red
     end
   end
 
@@ -152,5 +158,47 @@ class Chess
       end
     puts
     puts "#{name} Wins!"
+  end
+
+  def check_pawn_promotion(piece)
+    if piece.is_a?(Pawn)
+      row_index = chess_to_grid_coordinates(piece.position)[0]
+      if row_index == 0 || row_index == 7
+        promote_pawn(piece)
+      end
+    end
+  end
+
+  def promote_pawn(piece)
+    input = nil
+    loop do
+      puts "Enter the name or first letter of the piece"
+      puts "you want to promote you pawn to"
+      print "[k] knight, [b] bishop, [r] rook, [q] queen: "
+      input = gets.chomp.strip.downcase[0]
+      valid = ["k", "b", "r", "q"]
+      if valid.include?(input)
+        break 
+      else
+        puts
+        puts "Invalid input"
+        puts
+      end
+    end
+
+    piece_class = case input[0]
+      when "k"
+        Knight
+      when "b"
+        Bishop
+      when "r"
+        Rook
+      else
+        Queen
+      end
+
+    new_piece = piece_class.new(@board, piece.position, piece.color)
+    @board.remove_piece(piece)
+    @board.add_piece(new_piece)
   end
 end

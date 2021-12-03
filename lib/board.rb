@@ -201,6 +201,22 @@ class Board
     nil
   end
 
+  def remove_piece(piece)
+    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
+    if self[piece.position] == piece
+      self[piece.position] = nil
+    end
+    piece_arr.delete(piece)
+  end
+
+  def add_piece(piece)
+    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
+    if self[piece.position] != piece
+      self[piece.position] = piece
+    end
+    piece_arr.push(piece)
+  end
+
   def display
     puts
 
