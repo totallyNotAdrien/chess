@@ -6,6 +6,8 @@ require "pry-byebug"
 class Chess
   include ChessHelper
 
+  attr_reader :board
+
   def initialize(moves_to_load = nil)
     @end_game = false
     @board = nil
