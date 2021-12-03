@@ -66,10 +66,10 @@ class Chess
       end
     elsif input.downcase == "save"
       save
-      @end_game = false
+      @end_game = true
       true
     elsif input.downcase == "quit"
-      @end_game = false
+      @end_game = true
       true
     end
   end

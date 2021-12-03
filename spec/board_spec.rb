@@ -409,7 +409,7 @@ describe Board do
 
     context "when only in check" do
       it "returns false" do
-        @board = board_with_moves("f2f3 e7e6 a2a4 d8h4", true)
+        @board = board_with_moves("f2f3 e7e6 a2a4 d8h4", false)
         #@board.display
         expect(@board).not_to be_in_checkmate(ChessHelper::WHITE)
       end
