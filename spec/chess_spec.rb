@@ -28,6 +28,45 @@ describe Chess do
           expect {@game.handle_input("g7g8")}.to change {board["g8"].class}.to(Knight)
         end
       end
+
+      context "if player promotes to Bishop" do
+        before(:each) do
+          allow(@game).to receive(:gets).and_return("bishop")
+        end
+
+        it "changes Pawn to a Bishop" do
+          board = @game.board
+          allow(@game).to receive(:puts)
+          allow(@game).to receive(:print)
+          expect {@game.handle_input("g7g8")}.to change {board["g8"].class}.to(Bishop)
+        end
+      end
+
+      context "if player promotes to Rook" do
+        before(:each) do
+          allow(@game).to receive(:gets).and_return("rook")
+        end
+
+        it "changes Pawn to a Rook" do
+          board = @game.board
+          allow(@game).to receive(:puts)
+          allow(@game).to receive(:print)
+          expect {@game.handle_input("g7g8")}.to change {board["g8"].class}.to(Rook)
+        end
+      end
+
+      context "if player promotes to Queen" do
+        before(:each) do
+          allow(@game).to receive(:gets).and_return("queen")
+        end
+
+        it "changes Pawn to a Queen" do
+          board = @game.board
+          allow(@game).to receive(:puts)
+          allow(@game).to receive(:print)
+          expect {@game.handle_input("g7g8")}.to change {board["g8"].class}.to(Queen)
+        end
+      end
     end
   end
 end

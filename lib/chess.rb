@@ -114,15 +114,17 @@ class Chess
     @player_index = (@player_index + 1) % 2
   end
 
-  def moves
-    @moves.join(" ")
-  end
+  private
 
   def save
     path = save_path
     File.open(path, "w") do |file|
       YAML.dump(moves, file)
     end
+  end
+
+  def save_name_to_path(save_name)
+    "saves/#{save_name}.yaml"
   end
 
   def save_path
@@ -144,10 +146,8 @@ class Chess
     save_name_to_path(save_name)
   end
 
-  private
-
-  def save_name_to_path(save_name)
-    "saves/#{save_name}.yaml"
+  def moves
+    @moves.join(" ")
   end
 
   def winner_msg
