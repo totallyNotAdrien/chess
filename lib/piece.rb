@@ -9,7 +9,7 @@ class Piece
     if in_grid_coords?(position)
       position = grid_to_chess_coordinates(position) 
     elsif !in_chess_coords?(position)
-      puts "Invalid position error: Piece: #{self}, Pos: #{position}"
+      puts "Invalid position error: Piece: <#{self.class}>: #{self}, Pos: #{position}"
       position = nil
     end
     @board = board

@@ -1,5 +1,22 @@
 require_relative "../lib/board.rb"
 describe Board do
+
+  let(:newly_set_up_board) do
+    board = Board.new
+    board.set_up_new_board
+    board
+  end
+
+  def board_with_moves(moves_str, show_each_step = false)
+    board = newly_set_up_board
+    moves = moves_str.split(" ")
+    moves.each do |move_str|
+      start_pos, end_pos = move_str.insert(2,":").split(":")
+      board.move_piece(start_pos, end_pos)
+      board.display if show_each_step
+    end
+    board
+  end
   describe "#set_up_new_board" do
     matcher :have_correct_first_rank_classes do
       match do |actual|
@@ -26,12 +43,6 @@ describe Board do
       match do |pieces|
         pieces.all? { |piece| piece.color == expected_color }
       end
-    end
-
-    let(:newly_set_up_board) do
-      board = Board.new
-      board.set_up_new_board
-      board
     end
 
     context "when dealing with black's pieces" do
@@ -84,12 +95,6 @@ describe Board do
   end
 
   describe "#move_piece" do
-    let(:newly_set_up_board) do
-      board = Board.new
-      board.set_up_new_board
-      board
-    end
-
     before(:each) do
       @board = newly_set_up_board
     end
@@ -249,17 +254,6 @@ describe Board do
       end
 
       context "if move places current color in check" do
-        def board_with_moves(moves_str, show_each_step)
-          board = newly_set_up_board
-          moves = moves_str.split(" ")
-          moves.each do |move_str|
-            start_pos, end_pos = move_str.insert(2,":").split(":")
-            board.move_piece(start_pos, end_pos)
-            board.display if show_each_step
-          end
-          board
-        end
-
         before(:each) do
           allow(@board).to receive(:king_in_check_msg)
         end
@@ -309,12 +303,6 @@ describe Board do
   end
 
   describe "#under_attack_from_color?" do
-    let(:newly_set_up_board) do
-      board = Board.new
-      board.set_up_new_board
-      board
-    end
-
     before(:each) do
       @board = newly_set_up_board
     end
@@ -382,23 +370,6 @@ describe Board do
   end
 
   describe "#in_checkmate?" do
-    let(:newly_set_up_board) do
-      board = Board.new
-      board.set_up_new_board
-      board
-    end
-
-    def board_with_moves(moves_str, show_each_step)
-      board = newly_set_up_board
-      moves = moves_str.split(" ")
-      moves.each do |move_str|
-        start_pos, end_pos = move_str.insert(2,":").split(":")
-        board.move_piece(start_pos, end_pos)
-        board.display if show_each_step
-      end
-      board
-    end
-
     context "when white has been checkmated" do
       it "returns true (Fool's mate)" do
         @board = board_with_moves("f2f3 e7e6 g2g4 d8h4", false)
@@ -419,6 +390,65 @@ describe Board do
   describe "#in_stalemate?" do
     before(:each) do
       @board = Board.new
+    end
+
+    context "when not in stalemate" do
+      it "returns false" do
+        @board.set_up_new_board
+        expect(@board).not_to be_in_stalemate(ChessHelper::WHITE)
+      end
+
+      it "returns false" do
+        @board.set_up_new_board
+        expect(@board).not_to be_in_stalemate(ChessHelper::BLACK)
+      end
+
+      context "if in check" do
+        it "returns false" do
+          @board = board_with_moves("f2f3 e7e6 a2a4 d8h4")
+          #@board.display
+          expect(@board).not_to be_in_stalemate(ChessHelper::WHITE)
+        end
+      end
+
+      context "if in checkmate" do
+        it "returns false (Fool's mate)" do
+          @board = board_with_moves("f2f3 e7e6 g2g4 d8h4")
+          #@board.display
+          expect(@board).not_to be_in_stalemate(ChessHelper::WHITE)
+        end
+      end
+    end
+
+    before(:each) do
+      @board = Board.new
+    end
+
+    context "when in stalemate" do
+      it "returns true" do
+        @board.add_new_piece(King, "f8", ChessHelper::BLACK)
+        @board.add_new_piece(Pawn, "f7", ChessHelper::WHITE)
+        @board.add_new_piece(King, "f6", ChessHelper::WHITE)
+        #@board.display    #uncomment to show setup
+        expect(@board).to be_in_stalemate(ChessHelper::BLACK)
+      end
+
+      it "returns true" do
+        @board.add_new_piece(King, "a8", ChessHelper::BLACK)
+        @board.add_new_piece(Bishop, "b8", ChessHelper::BLACK)
+        @board.add_new_piece(King, "b6", ChessHelper::WHITE)
+        @board.add_new_piece(Rook, "h8", ChessHelper::WHITE)
+        #@board.display    #uncomment to show setup
+        expect(@board).to be_in_stalemate(ChessHelper::BLACK)
+      end
+
+      it "returns true" do
+        @board.add_new_piece(King, "a1", ChessHelper::BLACK)
+        @board.add_new_piece(Rook, "b2", ChessHelper::WHITE)
+        @board.add_new_piece(King, "c3", ChessHelper::WHITE)
+        #@board.display    #uncomment to show setup
+        expect(@board).to be_in_stalemate(ChessHelper::BLACK)
+      end
     end
   end
 end

@@ -178,7 +178,7 @@ class Board
     end
   end
 
-  def in_stalemate(color)
+  def in_stalemate?(color)
     return false if in_check?(color)
 
     pieces = color == WHITE ? @white_pieces : @black_pieces
@@ -233,8 +233,8 @@ class Board
     piece_arr.push(piece)
   end
 
-  def add_new_piece(piece_class, position, color)
-    piece = piece_class.new(self, position, color)
+  def add_new_piece(piece_class, position, color, moved = true)
+    piece = piece_class.new(self, position, color, moved)
     self[position] = piece
     piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
     piece_arr.push(piece)
