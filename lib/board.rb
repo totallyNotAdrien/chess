@@ -178,6 +178,22 @@ class Board
     end
   end
 
+  def in_stalemate(color)
+    return false if in_check?(color)
+
+    pieces = color == WHITE ? @white_pieces : @black_pieces
+    pieces.all? do |piece| 
+      moves = piece.moves
+      if moves.empty?
+        true
+      else
+        moves.all? do |end_pos| 
+          in_check_after_move?(piece.position, end_pos)
+        end
+      end
+    end
+  end
+
   def [](index)
     if index.is_a?(Integer)
       return @grid[index]
@@ -214,6 +230,13 @@ class Board
     if self[piece.position] != piece
       self[piece.position] = piece
     end
+    piece_arr.push(piece)
+  end
+
+  def add_new_piece(piece_class, position, color)
+    piece = piece_class.new(self, position, color)
+    self[position] = piece
+    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
     piece_arr.push(piece)
   end
 

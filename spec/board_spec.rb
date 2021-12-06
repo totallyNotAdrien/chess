@@ -415,4 +415,10 @@ describe Board do
       end
     end
   end
+
+  describe "#in_stalemate?" do
+    before(:each) do
+      @board = Board.new
+    end
+  end
 end

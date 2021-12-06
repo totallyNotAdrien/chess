@@ -5,7 +5,7 @@ class Piece
 
   attr_reader :color, :moved
 
-  def initialize(board, position, color = WHITE)
+  def initialize(board, position, color, moved = false)
     if in_grid_coords?(position)
       position = grid_to_chess_coordinates(position) 
     elsif !in_chess_coords?(position)
@@ -20,7 +20,7 @@ class Piece
     @backward = -@forward
     @left = @forward
     @right = -@left
-    @moved = false
+    @moved = moved
   end
 
   def position
