@@ -217,20 +217,13 @@ class Board
     nil
   end
 
-  def remove_piece(piece)
-    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
-    if self[piece.position] == piece
-      self[piece.position] = nil
+  def promote_pawn(pawn, new_class)
+    if pawn.is_a?(Pawn)
+      new_piece = new_class.new(self, pawn.position, pawn.color)
+      remove_piece(pawn)
+      add_piece(new_piece)
+      true
     end
-    piece_arr.delete(piece)
-  end
-
-  def add_piece(piece)
-    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
-    if self[piece.position] != piece
-      self[piece.position] = piece
-    end
-    piece_arr.push(piece)
   end
 
   def add_new_piece(piece_class, position, color, moved = true)
@@ -322,7 +315,7 @@ class Board
 
   def force_move(start_pos, end_pos)
     #assumes that start_pos and end_pos have been validated
-    
+
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
   end
@@ -347,6 +340,22 @@ class Board
         return grid_to_chess_coordinates([row, col]) if piece.is_a?(King) && piece.color == BLACK
       end
     end
+  end
+
+  def remove_piece(piece)
+    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
+    if self[piece.position] == piece
+      self[piece.position] = nil
+    end
+    piece_arr.delete(piece)
+  end
+
+  def add_piece(piece)
+    piece_arr = piece.color == WHITE ? @white_pieces : @black_pieces
+    if self[piece.position] != piece
+      self[piece.position] = piece
+    end
+    piece_arr.push(piece)
   end
 end
 

@@ -228,8 +228,6 @@ class Chess
         Queen
       end
 
-    new_piece = piece_class.new(@board, piece.position, piece.color)
-    @board.remove_piece(piece)
-    @board.add_piece(new_piece)
+    @board.promote_pawn(piece, piece_class)
   end
 end
