@@ -93,8 +93,7 @@ class Chess
   end
 
   def player_input
-    puts "Enter 'help' for how to play or"
-    print "Enter your move: "
+    print "Enter 'help' for how to play or enter your move: "
     gets.chomp.strip.remove_spaces
   end
 
@@ -124,8 +123,9 @@ class Chess
 
     #{"How To Move".yellow}
     This game uses a form of algebraic notation to input moves.
-    It uses the letters and numbers displayed along the bottom
-    and left of the board to represent any square on the board.
+    It uses the letters and numbers displayed along the sides
+    of the board to represent any square on the board.
+
     For example, when a game first starts:
       "a2a4" will move the leftmost white pawn 2 spaces forward
       "g1f3" will move the right white knight 2 forward and 1 left
