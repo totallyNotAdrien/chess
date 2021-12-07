@@ -243,6 +243,13 @@ class Board
   def display
     puts
 
+    #column indicators
+    col_output = " " * 4
+    for letter in "a".."h"
+      col_output += "#{letter}" + (" " * 2)
+    end
+    puts col_output
+
     output = ""
     #build output row by row
     for row_index in 0...@rows
@@ -265,23 +272,21 @@ class Board
         row_out += "#{grid_space}#{last_col ? " " : ""}"
         bg_color = (bg_color + 1) % 2
       end
+      row_out += "#{row_number}"
       output += "#{row_out}\n"
     end
 
     puts output
-
-    #column indicators
-    col_num_output = " " * 4
-    for letter in "a".."h"
-      col_num_output += "#{letter}" + (" " * 2)
-    end
-    puts col_num_output
+    
+    puts col_output
   end
 
   private
 
-  #assumes that start_pos and end_pos have been validated
+  
   def in_check_after_move?(start_pos, end_pos)
+    #assumes that start_pos and end_pos have been validated
+
     raise ArgumentError.new("No Piece at start_pos") unless self[start_pos]
     
     piece_to_move = self[start_pos]
@@ -315,8 +320,9 @@ class Board
     @en_passant = {}
   end
 
-  #assumes that start_pos and end_pos have been validated
   def force_move(start_pos, end_pos)
+    #assumes that start_pos and end_pos have been validated
+    
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
   end

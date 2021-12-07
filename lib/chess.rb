@@ -83,6 +83,9 @@ class Chess
     elsif input.downcase == "quit" || input.downcase == "exit"
       @end_game = true
       true
+    elsif input.downcase == "help"
+      Chess.show_help_screen
+      false
     else
       puts
       puts "Invalid move format '#{input}'".red
@@ -90,7 +93,7 @@ class Chess
   end
 
   def player_input
-    puts "Enter 'save' to save and quit, 'quit' / 'exit' to quit without saving, or"
+    puts "Enter 'help' for how to play or"
     print "Enter your move: "
     gets.chomp.strip.remove_spaces
   end
@@ -112,6 +115,32 @@ class Chess
 
   def switch_player
     @player_index = (@player_index + 1) % 2
+  end
+
+  def self.show_help_screen
+    puts <<~HELPSCREEN
+
+
+
+    #{"How To Move".yellow}
+    This game uses a form of algebraic notation to input moves.
+    It uses the letters and numbers displayed along the bottom
+    and left of the board to represent any square on the board.
+    For example, when a game first starts:
+      "a2a4" will move the leftmost white pawn 2 spaces forward
+      "g1f3" will move the right white knight 2 forward and 1 left
+
+
+    #{"Commands".yellow}
+    help: displays this screen
+    save: allows you to name and save your game, then quits the game
+    exit/quit: quits the game without saving
+
+
+    HELPSCREEN
+    print "Press ENTER to continue..."
+    gets
+    puts "\n\n\n\n"
   end
 
   private

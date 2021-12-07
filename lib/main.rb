@@ -18,7 +18,7 @@ def load_game
       if File.exist?(path)
         puts "[#{file_number}] #{path_to_save_name(path)}"
       end
-      puts "\n\n"
+      puts
       file_number += 1
     end
     print "Select the number [x] of the file you want to load (ex: '1'): "
